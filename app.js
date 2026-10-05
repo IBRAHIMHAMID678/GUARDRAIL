@@ -15,7 +15,7 @@ const state = {
   mode: 'literal',
   rule: 'git commit',
   activeFilter: 'all',
-  activeCaseId: 'TC-03', // Default to TC-03 so evidence is immediately visible on first load
+  activeCaseId: 'TC-03', // Default to TC-03 so case details are immediately visible on first load
   history: [],
   lastRunResult: null,
   isExecuting: false
@@ -55,15 +55,19 @@ const elements = {
   scorePct: document.getElementById('score-pct'),
   scoreFraction: document.getElementById('score-fraction'),
   verdictBanner: document.getElementById('verdict-banner'),
+  fpFraction: document.getElementById('fp-fraction'),
+  fpWarn: document.getElementById('fp-warn'),
   meterMatcher: document.getElementById('meter-matcher'),
   meterShell: document.getElementById('meter-shell'),
   meterHook: document.getElementById('meter-hook'),
+  utcClock: document.getElementById('utc-clock'),
 
   // Filter Pills & Badges
   pillTabs: document.querySelectorAll('.pill-tab'),
   badgeMissed: document.getElementById('badge-missed'),
   badgeBlocked: document.getElementById('badge-blocked'),
   badgeNa: document.getElementById('badge-na'),
+  badgeFp: document.getElementById('badge-fp'),
 
   // Test Runner List
   runnerList: document.getElementById('test-runner-list'),
@@ -89,6 +93,16 @@ const elements = {
   methTabs: document.querySelectorAll('.meth-tab'),
   methPanes: document.querySelectorAll('.meth-pane'),
 
+  // Login Screen (demo only — no real authentication)
+  loginScreen: document.getElementById('login-screen'),
+  appShell: document.getElementById('app-shell'),
+  loginForm: document.getElementById('login-form'),
+  loginName: document.getElementById('login-name'),
+  btnGuest: document.getElementById('btn-guest'),
+  userInitials: document.getElementById('user-initials'),
+  userName: document.getElementById('user-name'),
+  btnSignout: document.getElementById('btn-signout'),
+
   // Invariant Modal
   modalSelfTests: document.getElementById('modal-self-tests'),
   btnCloseModal: document.getElementById('btn-close-modal'),
@@ -102,9 +116,78 @@ const elements = {
  */
 function init() {
   bindEvents();
+  setupLogin();
   loadPolicy(state.policyId);
+  tickClock();
+  setInterval(tickClock, 1000);
   // Execute initial suite immediately so first viewport is populated
   executeSuiteImmediate();
+}
+
+/**
+ * Live UTC readout for the status bar — mission-control style.
+ */
+function tickClock() {
+  if (!elements.utcClock) return;
+  const d = new Date();
+  elements.utcClock.textContent = d.toISOString().slice(11, 19) + ' UTC';
+}
+
+/**
+ * Demo login — no real authentication. Any details work, nothing is sent anywhere.
+ */
+function setupLogin() {
+  const saved = readSavedUser();
+  if (saved) {
+    enterApp(saved.name);
+  } else {
+    showLogin();
+  }
+
+  elements.loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = (elements.loginName.value || '').trim() || 'Guest';
+    saveUser(name);
+    enterApp(name);
+  });
+
+  elements.btnGuest.addEventListener('click', () => {
+    saveUser('Guest');
+    enterApp('Guest');
+  });
+
+  elements.btnSignout.addEventListener('click', () => {
+    try { localStorage.removeItem('guardrail_user'); } catch (err) { /* ignore */ }
+    showLogin();
+  });
+}
+
+function readSavedUser() {
+  try {
+    const raw = localStorage.getItem('guardrail_user');
+    return raw ? JSON.parse(raw) : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function saveUser(name) {
+  try {
+    localStorage.setItem('guardrail_user', JSON.stringify({ name }));
+  } catch (err) { /* ignore */ }
+}
+
+function showLogin() {
+  elements.loginScreen.classList.remove('hidden');
+  elements.appShell.classList.add('hidden');
+}
+
+function enterApp(name) {
+  elements.loginScreen.classList.add('hidden');
+  elements.appShell.classList.remove('hidden');
+  const display = name || 'Guest';
+  elements.userName.textContent = display;
+  elements.userInitials.textContent = display.trim().charAt(0).toUpperCase() || 'G';
 }
 
 /**
@@ -237,20 +320,20 @@ function loadPolicy(policyId) {
   const policy = POLICIES[policyId];
   if (!policy) return;
 
-  elements.policyDesc.textContent = `Policy intent: ${policy.intent}`;
+  elements.policyDesc.textContent = policy.intent;
   elements.modeSelect.value = policy.defaultMode;
   state.mode = policy.defaultMode;
   elements.ruleInput.value = policy.defaultRule;
   state.rule = policy.defaultRule;
 
   if (policyId === 'git-commit') {
-    elements.presetNaive.innerHTML = '<span class="chip-dot"></span> Naive Substring';
-    elements.presetRegex.innerHTML = '<span class="chip-dot"></span> Anchored Regex';
-    elements.presetHardened.innerHTML = '<span class="chip-dot"></span> Structured Token';
+    elements.presetNaive.innerHTML = '<span class="chip-dot"></span> Simple text';
+    elements.presetRegex.innerHTML = '<span class="chip-dot"></span> Pattern';
+    elements.presetHardened.innerHTML = '<span class="chip-dot"></span> Smart tokens';
   } else {
-    elements.presetNaive.innerHTML = '<span class="chip-dot"></span> Naive Pipe';
-    elements.presetRegex.innerHTML = '<span class="chip-dot"></span> Regex Pipe';
-    elements.presetHardened.innerHTML = '<span class="chip-dot"></span> Structured Pipe';
+    elements.presetNaive.innerHTML = '<span class="chip-dot"></span> Simple pipe';
+    elements.presetRegex.innerHTML = '<span class="chip-dot"></span> Pipe pattern';
+    elements.presetHardened.innerHTML = '<span class="chip-dot"></span> Smart pipe';
   }
 
   setActivePreset(elements.presetNaive);
@@ -263,24 +346,24 @@ function loadPolicy(policyId) {
 function updateModeUI() {
   switch (state.mode) {
     case 'literal':
-      elements.modeMeta.textContent = 'SUBSTRING';
-      elements.ruleTypeIndicator.textContent = 'RAW BYTES';
-      elements.modeDesc.textContent = 'Inspects command string for contiguous literal occurrence.';
+      elements.modeMeta.textContent = 'TEXT MATCH';
+      elements.ruleTypeIndicator.textContent = 'TEXT';
+      elements.modeDesc.textContent = 'Checks if your rule appears in the command exactly as written.';
       break;
     case 'regex':
-      elements.modeMeta.textContent = 'ECMA REGEX';
+      elements.modeMeta.textContent = 'PATTERN';
       elements.ruleTypeIndicator.textContent = 'PATTERN';
-      elements.modeDesc.textContent = 'Evaluates compiled regular expression against full command string.';
+      elements.modeDesc.textContent = 'Uses a pattern (regex) to match the command.';
       break;
     case 'wildcard':
-      elements.modeMeta.textContent = 'GLOB EXPANSION';
-      elements.ruleTypeIndicator.textContent = 'GLOB PATTERN';
-      elements.modeDesc.textContent = 'Translates wildcard glob (*, ?) into equivalent token filter.';
+      elements.modeMeta.textContent = 'WILDCARD';
+      elements.ruleTypeIndicator.textContent = 'WILDCARD';
+      elements.modeDesc.textContent = 'Uses * and ? to match parts of the command.';
       break;
     case 'structured':
-      elements.modeMeta.textContent = 'STRUCTURED PARSER';
-      elements.ruleTypeIndicator.textContent = 'TOKEN QUERY';
-      elements.modeDesc.textContent = 'Extracts executable and subcommand tokens (e.g. exec=git & subcmd=commit).';
+      elements.modeMeta.textContent = 'SMART TOKENS';
+      elements.ruleTypeIndicator.textContent = 'TOKENS';
+      elements.modeDesc.textContent = 'Finds the command name and action separately (e.g. exec=git & action=commit).';
       break;
   }
 }
@@ -292,20 +375,20 @@ function runSuiteWithTicker() {
   if (state.isExecuting) return;
   state.isExecuting = true;
 
-  elements.controlStatus.textContent = 'TESTING...';
+  elements.controlStatus.textContent = 'Testing…';
   elements.btnRun.disabled = true;
-  elements.btnRunText.textContent = 'ANALYZING...';
+  elements.btnRunText.textContent = 'Checking…';
   elements.diagnosticTicker.classList.remove('hidden');
 
   // Activate Stage 02 in Nav
   elements.navAttack.classList.add('active');
 
   const stages = [
-    { text: '01/05 Checking exact syntax representation...', pct: '20%' },
-    { text: '02/05 Checking flag reordering & parameter insertion...', pct: '45%' },
-    { text: '03/05 Testing shell chaining & compound operators (&&, ;)...', pct: '70%' },
-    { text: '04/05 Simulating executable resolution & wrappers (env, paths)...', pct: '90%' },
-    { text: '05/05 Isolating Git hook layer boundaries...', pct: '100%' }
+    { text: '1/5 Checking the exact command…', pct: '20%' },
+    { text: '2/5 Trying flags in between…', pct: '45%' },
+    { text: '3/5 Trying command chains (&&, ;)…', pct: '70%' },
+    { text: '4/5 Trying full paths and wrappers…', pct: '90%' },
+    { text: '5/5 Checking the git hook cases…', pct: '100%' }
   ];
 
   let currentStage = 0;
@@ -320,8 +403,8 @@ function runSuiteWithTicker() {
         executeSuiteImmediate();
         elements.diagnosticTicker.classList.add('hidden');
         elements.btnRun.disabled = false;
-        elements.btnRunText.textContent = 'RUN ATTACK SUITE';
-        elements.controlStatus.textContent = 'VERIFIED';
+        elements.btnRunText.textContent = 'Run the test';
+        elements.controlStatus.textContent = 'Done';
         state.isExecuting = false;
         // Activate Evidence Nav
         elements.navEvidence.classList.add('active');
@@ -341,7 +424,7 @@ function executeSuiteImmediate() {
   const outcome = evaluateSuite(policy, state.rule, state.mode);
 
   if (outcome.syntaxError) {
-    elements.ruleError.textContent = `[SYNTAX FAULT] ${outcome.syntaxError}`;
+    elements.ruleError.textContent = `Rule error: ${outcome.syntaxError}`;
     elements.ruleError.classList.remove('hidden');
   } else {
     elements.ruleError.classList.add('hidden');
@@ -352,6 +435,7 @@ function executeSuiteImmediate() {
 
   renderTelemetry(outcome);
   renderRunnerRows();
+  renderResultStrip();
   renderHistoryTimeline();
 
   // If activeCaseId exists, render its dossier
@@ -365,32 +449,68 @@ function executeSuiteImmediate() {
  * Renders Top Telemetry Block
  */
 function renderTelemetry(outcome) {
-  elements.scorePct.textContent = `${outcome.coveragePercent}%`;
-  elements.scoreFraction.textContent = `${outcome.applicableBlocked} / ${outcome.applicableTotal} APPLICABLE`;
+  animateScore(elements.scorePct, state.lastCoverage ?? 0, outcome.coveragePercent);
+  state.lastCoverage = outcome.coveragePercent;
+  elements.scoreFraction.textContent = `${outcome.applicableBlocked} / ${outcome.applicableTotal} blocked`;
 
   elements.verdictBanner.textContent = outcome.verdictHeadline;
   elements.verdictBanner.className = `verdict-tag ${outcome.verdictClass}`;
 
-  // Layer Meters
-  const matcherCases = outcome.results.filter(r => r.targetLayer === 'matcher');
+  // False alarms (precision): innocent commands the rule wrongly blocked
+  if (elements.fpFraction) {
+    elements.fpFraction.textContent = `${outcome.falsePositives} / ${outcome.benignTotal}`;
+  }
+  if (elements.fpWarn) {
+    elements.fpWarn.classList.toggle('hidden', outcome.falsePositives === 0);
+  }
+
+  // Layer Meters (attack cases only — benign cases have their own readout)
+  const attackResults = outcome.results.filter(r => r.category !== 'Benign');
+  const matcherCases = attackResults.filter(r => r.targetLayer === 'matcher');
   const matcherBlocked = matcherCases.filter(r => r.status === 'BLOCKED').length;
-  elements.meterMatcher.textContent = `${matcherBlocked}/${matcherCases.length} BLOCKED`;
+  elements.meterMatcher.textContent = `${matcherBlocked}/${matcherCases.length} blocked`;
 
   const shellCases = outcome.results.filter(r => r.targetLayer === 'shell');
   const shellBlocked = shellCases.filter(r => r.status === 'BLOCKED').length;
-  elements.meterShell.textContent = `${shellBlocked}/${shellCases.length} BLOCKED`;
+  elements.meterShell.textContent = `${shellBlocked}/${shellCases.length} blocked`;
 
   const hookCases = outcome.results.filter(r => r.targetLayer === 'hook');
-  elements.meterHook.textContent = `${hookCases.length} NON-APPLICABLE`;
+  elements.meterHook.textContent = `${hookCases.length} skipped`;
 
   // Badge Counts
   const missedCount = outcome.results.filter(r => r.status === 'MISSED').length;
   const blockedCount = outcome.results.filter(r => r.status === 'BLOCKED').length;
   const naCount = outcome.results.filter(r => r.status === 'NOT_APPLICABLE').length;
+  const fpCount = outcome.results.filter(r => r.status === 'FALSE_POSITIVE').length;
 
   elements.badgeMissed.textContent = missedCount;
   elements.badgeBlocked.textContent = blockedCount;
   elements.badgeNa.textContent = naCount;
+  if (elements.badgeFp) elements.badgeFp.textContent = fpCount;
+
+  const allPill = document.querySelector('.pill-tab[data-filter="all"]');
+  if (allPill) allPill.innerHTML = `All [${outcome.totalCases}]`;
+  const corpusCount = document.getElementById('corpus-count');
+  if (corpusCount) corpusCount.textContent = outcome.totalCases;
+}
+
+/**
+ * Animates the coverage number counting up/down to its new value
+ */
+function animateScore(el, from, to) {
+  if (from === to) {
+    el.textContent = `${to}%`;
+    return;
+  }
+  const start = performance.now();
+  const dur = 650;
+  function frame(t) {
+    const p = Math.min(1, (t - start) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = `${Math.round(from + (to - from) * eased)}%`;
+    if (p < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 }
 
 /**
@@ -405,6 +525,7 @@ function renderRunnerRows() {
     if (state.activeFilter === 'missed') return c.status === 'MISSED';
     if (state.activeFilter === 'blocked') return c.status === 'BLOCKED';
     if (state.activeFilter === 'not-applicable') return c.status === 'NOT_APPLICABLE';
+    if (state.activeFilter === 'false-positive') return c.status === 'FALSE_POSITIVE';
     return true;
   });
 
@@ -475,25 +596,69 @@ function inspectDossier(tc) {
   elements.dossierCode.textContent = tc.command;
 
   // Verdict Tag
-  elements.dossierBadge.textContent = tc.status === 'NOT_APPLICABLE' ? 'HOOK LAYER (N/A)' : tc.status;
-  elements.dossierBadge.className = `case-verdict-tag ${tc.status === 'BLOCKED' ? 'blocked' : tc.status === 'MISSED' ? 'missed' : 'na'}`;
+  const badgeText = tc.status === 'NOT_APPLICABLE' ? 'GIT HOOK TEST'
+    : tc.status === 'FALSE_POSITIVE' ? 'FALSE ALARM'
+    : tc.status === 'CLEAR' ? 'CLEAR' : tc.status;
+  elements.dossierBadge.textContent = badgeText;
+  const badgeClass = tc.status === 'BLOCKED' ? 'blocked'
+    : tc.status === 'MISSED' ? 'missed'
+    : tc.status === 'FALSE_POSITIVE' ? 'false-alarm'
+    : tc.status === 'CLEAR' ? 'clear' : 'na';
+  elements.dossierBadge.className = `case-verdict-tag ${badgeClass}`;
 
   // Evidence Pointer & Marker
   setDossierPointer(tc);
 
   elements.dossierIntent.textContent = tc.intent;
-  elements.dossierLayer.textContent = `${formatLayerUpper(tc.targetLayer)} (Control Level)`;
+  elements.dossierLayer.textContent = formatLayerUpper(tc.targetLayer);
   elements.dossierMatters.textContent = tc.whyItMatters;
   elements.dossierExplanation.textContent = tc.explanation;
 
   // Hardening Guidance
   if (tc.status === 'BLOCKED') {
-    elements.dossierHardening.textContent = 'This vector is intercepted by the current rule. Ensure subsequent rule hardening does not cause a regression on this baseline.';
+    elements.dossierHardening.textContent = 'Your current rule catches this one. When you change your rule, make sure you do not break this case.';
   } else if (tc.status === 'NOT_APPLICABLE') {
-    elements.dossierHardening.textContent = 'Control Layer Mismatch: A pre-commit hook bypass (--no-verify) cannot be solved by command pattern matching. This requires server-side repository branch protections and mandatory CI checks that agents cannot bypass.';
+    elements.dossierHardening.textContent = 'This is about git hooks, not text rules: --no-verify turns off git\'s own checks. A text rule cannot fix that — you need server-side rules (like branch protection on GitHub) that an agent cannot switch off.';
+  } else if (tc.status === 'FALSE_POSITIVE') {
+    elements.dossierHardening.textContent = 'Narrow the rule so it targets the dangerous action, not innocent lookalikes. Re-run after every tightening — these benign cases are your guardrail against overblocking.';
+  } else if (tc.status === 'CLEAR') {
+    elements.dossierHardening.textContent = 'Your rule correctly ignores this. Keep this case passing whenever you tighten the rule.';
   } else {
     elements.dossierHardening.textContent = getDossierHardening(tc);
   }
+
+  renderResultStrip();
+}
+
+/**
+ * Renders the signature case strip: one clickable block per test case,
+ * colored by verdict. Clicking a block opens that case's details.
+ */
+function renderResultStrip() {
+  const strip = document.getElementById('result-strip');
+  if (!strip || !state.lastRunResult || !state.lastRunResult.results) return;
+
+  strip.innerHTML = '';
+  state.lastRunResult.results.forEach(tc => {
+    const seg = document.createElement('button');
+    const kind = tc.status === 'BLOCKED' ? 'blocked'
+      : tc.status === 'MISSED' ? 'missed'
+      : tc.status === 'FALSE_POSITIVE' ? 'fp'
+      : tc.status === 'CLEAR' ? 'clear' : 'na';
+    seg.className = `strip-seg seg-${kind}${tc.id === state.activeCaseId ? ' seg-active' : ''}`;
+    const statusWord = tc.status === 'NOT_APPLICABLE' ? 'git-hook test'
+      : tc.status === 'FALSE_POSITIVE' ? 'false alarm'
+      : tc.status === 'CLEAR' ? 'correctly ignored' : tc.status.toLowerCase();
+    seg.title = `${tc.id} — ${tc.title} (${statusWord})`;
+    seg.setAttribute('aria-label', seg.title);
+    seg.addEventListener('click', () => {
+      document.querySelectorAll('.runner-row').forEach(r => r.classList.toggle('active-row', r.dataset.id === tc.id));
+      inspectDossier(tc);
+      const dossier = document.getElementById('forensic-dossier');
+      if (dossier) dossier.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+    strip.appendChild(seg);
+  });
 }
 
 /**
@@ -501,50 +666,53 @@ function inspectDossier(tc) {
  */
 function setDossierPointer(tc) {
   switch (tc.category) {
+    case 'Benign':
+      elements.dossierPointerText.textContent = 'Nothing dangerous here — the question is whether your rule can tell the difference.';
+      break;
     case 'Interleaved Flag':
-      elements.dossierPointerText.textContent = 'Parameter insertion (-C /repo) breaks contiguous string matching while remaining valid command invocation.';
+      elements.dossierPointerText.textContent = 'A flag (-C /repo) sits between "git" and "commit", so the exact text does not match — but it still commits.';
       break;
     case 'Shell Chaining':
-      elements.dossierPointerText.textContent = 'Compound operator (&& or ;) sequences previous commands, defeating start-of-line (^) anchors.';
+      elements.dossierPointerText.textContent = 'The commit is joined to another command with && or ; — rules that expect "git" at the start miss it.';
       break;
     case 'Path Variation':
-      elements.dossierPointerText.textContent = 'Absolute executable path (/usr/bin/git) alters binary token representation.';
+      elements.dossierPointerText.textContent = 'Git is run with its full path (/usr/bin/git), so the line does not start with plain "git".';
       break;
     case 'Dynamic Resolution':
-      elements.dossierPointerText.textContent = 'Subshell $(which git) evaluates at runtime in POSIX shell before process spawn.';
+      elements.dossierPointerText.textContent = 'The shell figures out where git is with $(which git) right before running it.';
       break;
     case 'Process Wrapper':
-      elements.dossierPointerText.textContent = 'Wrapper command (env) becomes the primary command token in the string.';
+      elements.dossierPointerText.textContent = 'The first word is "env", not "git" — simple rules check the wrong word.';
       break;
     case 'Syntactic Normalization':
-      elements.dossierPointerText.textContent = 'Unnormalized whitespace/tabs split tokens without breaking shell argv.';
+      elements.dossierPointerText.textContent = 'Extra spaces or tabs between the words — the shell ignores them, exact-text rules do not.';
       break;
     case 'Configuration Alias':
-      elements.dossierPointerText.textContent = 'Command relies on .gitconfig alias (ci -> commit). Matcher lacks Git internal config context.';
+      elements.dossierPointerText.textContent = 'The command uses a git nickname (ci = commit). The rule has no idea the nickname exists.';
       break;
     default:
-      elements.dossierPointerText.textContent = 'Syntactic representation differs from the pattern expected by the matcher.';
+      elements.dossierPointerText.textContent = 'This command is written differently from what your rule expects.';
   }
 }
 
 function getDossierHardening(tc) {
   switch (tc.category) {
     case 'Interleaved Flag':
-      return 'Harden from literal contiguous matching to Structured Token Parsing (exec=git & subcmd=commit), or allow interleaved flags in regex: ^git(\\s+--?[\\w-]+)*\\s+commit.';
+      return 'Switch from exact-text matching to smart tokens (exec=git & action=commit), or allow flags in a pattern like ^git(\\s+--[\\w-]+)*\\s+commit.';
     case 'Shell Chaining':
-      return 'Decompose shell commands into individual pipeline stages before matching, rather than anchoring regex to the line start.';
+      return 'Split chained commands into separate parts before checking, instead of only checking the start of the line.';
     case 'Path Variation':
-      return 'Normalize executable paths by extracting the basename (e.g. basename("/usr/bin/git") -> "git") prior to policy evaluation.';
+      return 'Take just the file name from the path (e.g. /usr/bin/git → git) before checking.';
     case 'Dynamic Resolution':
-      return 'Subshells cannot be statically evaluated with certainty. Sandbox environments must disallow dynamic subshell substitution in automated tool arguments.';
+      return 'You cannot reliably predict $(...) by reading text. In locked-down setups, do not allow $(...) in agent commands.';
     case 'Process Wrapper':
-      return 'Strip known process supervisors (env, sudo, nohup) to isolate the target invocation payload.';
+      return 'Strip known wrappers (env, sudo, nohup) first, then check what is left.';
     case 'Syntactic Normalization':
-      return 'Pre-process command strings by collapsing multiple whitespace/tab characters into a single space.';
+      return 'Squash multiple spaces and tabs into one space before checking.';
     case 'Configuration Alias':
-      return 'Defense cannot rely solely on command regexes. Enforce branch protection on GitHub/GitLab servers to disallow direct push/commit regardless of local alias.';
+      return 'Text rules alone cannot handle nicknames. Add branch protection on GitHub/GitLab so direct commits are rejected no matter how they are spelled.';
     default:
-      return 'Adopt structured argument tokenization instead of single fragile regex strings.';
+      return 'Check the command name and action as separate tokens instead of one fragile text match.';
   }
 }
 
@@ -553,6 +721,8 @@ function getRowStateClass(status) {
     case 'BLOCKED': return 'state-blocked';
     case 'MISSED': return 'state-missed';
     case 'NOT_APPLICABLE': return 'state-na';
+    case 'FALSE_POSITIVE': return 'state-fp';
+    case 'CLEAR': return 'state-clear';
     default: return '';
   }
 }
@@ -562,16 +732,18 @@ function getRowStateLabel(status) {
     case 'BLOCKED': return '✓ BLOCKED';
     case 'MISSED': return '! MISSED';
     case 'NOT_APPLICABLE': return '— HOOK';
+    case 'FALSE_POSITIVE': return '✕ FALSE ALARM';
+    case 'CLEAR': return '○ CLEAR';
     default: return status;
   }
 }
 
 function formatLayerUpper(layer) {
   switch (layer) {
-    case 'matcher': return 'MATCHER';
-    case 'shell': return 'SHELL';
-    case 'hook': return 'GIT HOOK';
-    case 'git-config': return 'GIT ALIAS';
+    case 'matcher': return 'Text check';
+    case 'shell': return 'Shell tricks';
+    case 'hook': return 'Git hooks';
+    case 'git-config': return 'Git nickname';
     default: return layer.toUpperCase();
   }
 }
@@ -602,7 +774,7 @@ function renderHistoryTimeline() {
   if (state.history.length <= 1) {
     elements.timelineBody.innerHTML = `
       <div class="empty-timeline">
-        Run test suite, modify rule to structured or regex, and retest to observe the empirical attack coverage delta.
+        Run a test, then change your rule and run again — you'll see your score change here.
       </div>
     `;
     return;
@@ -612,7 +784,7 @@ function renderHistoryTimeline() {
   const current = state.history[state.history.length - 1];
   const delta = current.coverage - before.coverage;
   const deltaSign = delta > 0 ? `+${delta}%` : `${delta}%`;
-  const deltaColor = delta > 0 ? 'var(--c-blocked)' : delta < 0 ? 'var(--c-missed)' : 'var(--text-dim)';
+  const deltaColor = delta > 0 ? 'var(--green)' : delta < 0 ? 'var(--red)' : 'var(--text-3)';
 
   elements.timelineBody.innerHTML = `
     <div class="timeline-delta-block">
@@ -622,7 +794,7 @@ function renderHistoryTimeline() {
         <span class="delta-rule" title="${escapeHtml(before.rule)}">${escapeHtml(before.rule)}</span>
       </div>
       <div class="timeline-col highlight-current">
-        <span class="delta-tag">CURRENT [${current.mode.toUpperCase()}]</span>
+        <span class="delta-tag">NOW [${current.mode.toUpperCase()}]</span>
         <span class="delta-score" style="color: ${deltaColor};">${current.coverage}% [${deltaSign}]</span>
         <span class="delta-rule" title="${escapeHtml(current.rule)}">${escapeHtml(current.rule)}</span>
       </div>
@@ -651,8 +823,8 @@ function openSelfTestsModal() {
     elements.modalTestOutput.appendChild(item);
   });
 
-  elements.modalTestSummary.textContent = `${testReport.passed} / ${testReport.total} INVARIANTS VERIFIED (${testReport.allPassed ? '100% PASS' : 'FAILURES DETECTED'})`;
-  elements.modalTestSummary.style.color = testReport.allPassed ? 'var(--c-blocked)' : 'var(--c-missed)';
+  elements.modalTestSummary.textContent = `${testReport.passed} / ${testReport.total} checks passed`;
+  elements.modalTestSummary.style.color = testReport.allPassed ? 'var(--green)' : 'var(--red)';
 }
 
 function closeSelfTestsModal() {

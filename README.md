@@ -67,7 +67,7 @@ Run the engine unit tests locally via Node:
 ```bash
 node test-engine.js
 ```
-Or click the **`13/13 INVARIANTS`** button in the web console header to run the test suite directly inside the browser.
+Or click the **`16/16 INVARIANTS`** button in the web console header to run the test suite directly inside the browser.
 
 ---
 
@@ -90,7 +90,7 @@ Or click the **`13/13 INVARIANTS`** button in the web console header to run the 
 - It is **not** a full shell AST compiler.
 - It is **not** an eBPF / OS-level syscall sandbox.
 - It does **not** prove formal mathematical security against unbounded Turing-complete shell programs.
-- Passing the 14-case corpus means: *"Robust against this curated adversarial corpus"*, NOT *"100% secure"*.
+- Passing the attack corpus means: *"Robust against this curated adversarial corpus"*, NOT *"100% secure"*.
 
 ---
 
@@ -121,4 +121,4 @@ Navigate to `http://localhost:8080/`.
 
 - **The Observation:** In the rush to implement guardrails for agentic coding tools, developers universally reach for literal string matchers. They confuse having written a string rule with having enforced an intent.
 - **The Attack on the Assumption:** The assumption that `"if I block 'git commit', the agent cannot commit"`. A 10-line POSIX invocation with `-C` or `&&` immediately disproves this assumption.
-- **The Deliberate Scope:** Rather than generating an unmaintainable 2,000-line pseudo-parser with hallucinated LLM explanations, I built the smallest useful forensic instrument: a deterministic 14-case corpus, explicit layer boundary isolation, Before/After delta tracking, and unit tests for the tester itself.
+- **The Deliberate Scope:** Rather than generating an unmaintainable 2,000-line pseudo-parser with hallucinated LLM explanations, I built the smallest useful forensic instrument: a deterministic 14-attack + 6-benign corpus, explicit layer boundary isolation, Before/After delta tracking, and unit tests for the tester itself.

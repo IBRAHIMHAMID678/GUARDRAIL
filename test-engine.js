@@ -99,6 +99,23 @@ export function runAllTests() {
   const structuredTest = evaluateMatcher('git -C /repo commit -m "fix"', 'exec=git & subcmd=commit', 'structured');
   assert('Structured matcher blocks interleaved flag', structuredTest.matched === true, 'Expected structured parser to catch git -C commit');
 
+  // 13. Benign cases: overbroad rule triggers FALSE_POSITIVE, precise rule stays CLEAR
+  const broadOutcome = evaluateSuite(POLICIES['git-commit'], 'git', 'literal', { caseSensitive: false });
+  const benignB01Broad = broadOutcome.results.find(r => r.id === 'TC-B01');
+  assert('Overbroad rule "git" false-positives on benign "git status"',
+    benignB01Broad && benignB01Broad.status === 'FALSE_POSITIVE' && broadOutcome.falsePositives > 0,
+    `Expected TC-B01 FALSE_POSITIVE with rule "git", got ${benignB01Broad?.status}, fp=${broadOutcome.falsePositives}`);
+
+  const preciseOutcome = evaluateSuite(POLICIES['git-commit'], 'git commit', 'literal', { caseSensitive: false });
+  const benignB01Precise = preciseOutcome.results.find(r => r.id === 'TC-B01');
+  const benignB05Precise = preciseOutcome.results.find(r => r.id === 'TC-B05');
+  assert('Precise rule "git commit" leaves benign "git status" CLEAR',
+    benignB01Precise && benignB01Precise.status === 'CLEAR',
+    `Expected TC-B01 CLEAR with rule "git commit", got ${benignB01Precise?.status}`);
+  assert('Naive rule "git commit" false-positives on quoted \'echo "remember: git commit"\'',
+    benignB05Precise && benignB05Precise.status === 'FALSE_POSITIVE',
+    `Expected TC-B05 FALSE_POSITIVE with rule "git commit", got ${benignB05Precise?.status}`);
+
   return {
     total: testResults.length,
     passed: passedCount,

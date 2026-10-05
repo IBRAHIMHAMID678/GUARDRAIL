@@ -3,472 +3,510 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GUARDRAIL / LAB — Adversarial AI Guardrail Test Console</title>
-  <meta name="description" content="Technical developer instrument testing whether AI coding guardrails defend the intended operation or merely match fragile syntax representations.">
+  <title>Guardrail Lab — Test your AI agent's guardrails</title>
+  <meta name="description" content="A simple, friendly tool that checks whether your guardrail rules actually block what you want them to block.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="instrument-shell">
-    
-    <!-- Instrument Top Header -->
-    <header class="console-header">
-      <div class="header-brand">
-        <span class="crosshair-marker">⌖</span>
-        <div class="brand-text">
-          <span class="system-id">DEFENSIVE INSTRUMENT // GL-01</span>
-          <h1 class="brand-title">GUARDRAIL / LAB<span class="cursor-blink">_</span></h1>
+
+  <!-- ======================= LOGIN SCREEN (demo only, no real sign-in) ======================= -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <div class="login-left">
+        <div class="login-brand">
+          <svg class="logo-svg logo-lg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5 20 6v6c0 5-3.4 8.3-8 9.5C7.4 20.3 4 17 4 12V6l8-3.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8.8 12 2.2 2.2 4.2-4.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="login-brand-name">Guardrail Lab</span>
         </div>
+        <h1 class="login-headline">Test your AI agent's guardrails <em>before</em> someone else does.</h1>
+        <p class="login-sub">Write a rule like <code>git commit</code>, and we'll throw 14 sneaky commands at it — showing you exactly which ones slipped through and why.</p>
+        <ul class="login-features">
+          <li><span class="login-feat-icon">✓</span> 14 real-world tricky commands to test against</li>
+          <li><span class="login-feat-icon">✓</span> See exactly what your rule missed — and how to fix it</li>
+          <li><span class="login-feat-icon">✓</span> Watch your score climb as you improve your rule</li>
+        </ul>
+        <div class="login-footnote">Runs 100% in your browser · Nothing is uploaded anywhere</div>
       </div>
-
-      <!-- Instrument Pipeline Stage Navigator -->
-      <nav class="pipeline-nav">
-        <span class="step-tag active">01 DEFINE</span>
-        <span class="step-arrow">→</span>
-        <span class="step-tag" id="nav-attack">02 ATTACK</span>
-        <span class="step-arrow">→</span>
-        <span class="step-tag" id="nav-evidence">03 EVIDENCE</span>
-        <span class="step-arrow">→</span>
-        <span class="step-tag" id="nav-harden">04 HARDEN</span>
-      </nav>
-
-      <!-- System Status Indicators -->
-      <div class="header-telemetry">
-        <div class="telemetry-pill">
-          <span class="status-dot green"></span>
-          <span class="pill-label">ENGINE:</span>
-          <span class="pill-val">DETERMINISTIC</span>
-        </div>
-        <div class="telemetry-pill">
-          <span class="status-dot gray"></span>
-          <span class="pill-label">EXECUTION:</span>
-          <span class="pill-val">ZERO-CODE-EVAL</span>
-        </div>
-        <button id="btn-self-tests" class="btn-telemetry" title="View 13 verified engine invariants">
-          <span class="telemetry-icon">✓</span> 13/13 INVARIANTS
-        </button>
-        <button id="btn-theme-toggle" class="btn-theme-toggle" title="Toggle Light / Dark Theme">
-          ◐ THEME
-        </button>
-      </div>
-    </header>
-
-    <!-- Operational Header Strip (First Viewport Immediate Context) -->
-    <section class="operational-banner">
-      <div class="banner-core">
-        <span class="banner-mission-tag">PURPOSE</span>
-        <p class="banner-text">
-          Test whether your guardrail protects the <strong>intended operation</strong> — or only the exact <strong>command string</strong> you wrote.
-        </p>
-      </div>
-      <div class="banner-specs">
-        <span class="spec-item">CORPUS: <strong>14 VECTORS</strong></span>
-        <span class="spec-divider">|</span>
-        <span class="spec-item">TARGET: <strong>TOOL EXECUTION BOUNDARY</strong></span>
-        <span class="spec-divider">|</span>
-        <span class="spec-item">DIAGNOSTIC: <strong>FORENSIC LAYER ISOLATION</strong></span>
-      </div>
-    </section>
-
-    <!-- Main Two-Column Instrument Console -->
-    <main class="console-body">
-      
-      <!-- Left Panel: Control Configuration & Diagnostic Trigger -->
-      <section class="console-panel control-bench">
-        <div class="panel-bar">
-          <div class="panel-heading">
-            <span class="num-bracket">[ 01 ]</span>
-            <h2>DEFINE THE CONTROL</h2>
+      <div class="login-right">
+        <h2 class="login-title">Sign in</h2>
+        <p class="login-hint">This is a demo sign-in. Any name and email works — nothing is sent or stored online.</p>
+        <form id="login-form" class="login-form" novalidate>
+          <div class="login-field">
+            <label for="login-name">Your name</label>
+            <input type="text" id="login-name" placeholder="e.g. Alex Khan" autocomplete="name">
           </div>
-          <span class="subtle-status" id="control-status">READY</span>
-        </div>
-
-        <form id="guardrail-form" class="bench-body">
-          <!-- Policy Intent -->
-          <div class="control-group">
-            <div class="group-header">
-              <label for="policy-select">POLICY INTENT (INTENDED OPERATION)</label>
-              <span class="field-meta">SEMANTIC GOAL</span>
-            </div>
-            <div class="custom-select">
-              <select id="policy-select">
-                <option value="git-commit" selected>Block git commit [Version Control Mutation]</option>
-                <option value="curl-bash">Block curl piped to shell [Remote Code Exec]</option>
-              </select>
-            </div>
-            <p id="policy-desc" class="param-desc">Policy restricts an agent from generating commits to Git version control.</p>
+          <div class="login-field">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
           </div>
-
-          <!-- Matching Engine Model -->
-          <div class="control-group">
-            <div class="group-header">
-              <label for="mode-select">CONTROL ENFORCEMENT MODEL</label>
-              <span class="field-meta" id="mode-meta">SUBSTRING</span>
-            </div>
-            <div class="custom-select">
-              <select id="mode-select">
-                <option value="literal" selected>Literal Substring Matcher [Naive / Industry Default]</option>
-                <option value="regex">Regular Expression [Syntax Pattern Engine]</option>
-                <option value="wildcard">Wildcard Glob Pattern [Glob * and ?]</option>
-                <option value="structured">Structured Token Model [Executable + Subcommand Parser]</option>
-              </select>
-            </div>
-            <p id="mode-desc" class="param-desc">Inspects command string for contiguous literal occurrence.</p>
+          <div class="login-field">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Anything works" autocomplete="current-password">
           </div>
-
-          <!-- Pattern Input -->
-          <div class="control-group">
-            <div class="group-header">
-              <label for="rule-input">GUARDRAIL RULE / PATTERN</label>
-              <span class="field-meta rule-type" id="rule-type-indicator">RAW BYTES</span>
-            </div>
-            <div class="rule-terminal-input">
-              <span class="terminal-prefix">&gt;</span>
-              <input type="text" id="rule-input" value="git commit" spellcheck="false" autocomplete="off">
-            </div>
-            <div id="rule-error" class="rule-diagnostic-err hidden" role="alert"></div>
-          </div>
-
-          <!-- Parameter Presets -->
-          <div class="parameter-presets">
-            <span class="preset-label">TEST PRESETS:</span>
-            <div class="preset-buttons">
-              <button type="button" class="btn-preset active" id="preset-naive">
-                <span class="chip-dot"></span> Naive Substring
-              </button>
-              <button type="button" class="btn-preset" id="preset-regex">
-                <span class="chip-dot"></span> Anchored Regex
-              </button>
-              <button type="button" class="btn-preset" id="preset-hardened">
-                <span class="chip-dot"></span> Structured Token
-              </button>
-            </div>
-          </div>
-
-          <!-- Instrument Action Button -->
-          <div class="instrument-cta">
-            <button type="submit" id="btn-run" class="btn-instrument">
-              <span class="btn-icon">⚡</span>
-              <span id="btn-run-text" class="btn-text">RUN ATTACK SUITE</span>
-              <span class="btn-counter">(14 CASES)</span>
-              <span class="btn-arrow">→</span>
-            </button>
-          </div>
-
-          <!-- Live Diagnostic Progression Ticker (Visualizing Deterministic Stages) -->
-          <div id="diagnostic-ticker" class="diagnostic-ticker hidden">
-            <div class="ticker-header">
-              <span class="ticker-dot"></span>
-              <span class="ticker-title">RUNNING DETERMINISTIC ANALYSIS</span>
-            </div>
-            <div class="ticker-stage" id="ticker-stage-text">01/05 Checking exact syntax representation...</div>
-            <div class="ticker-progress-bar">
-              <div class="ticker-progress-fill" id="ticker-progress-fill"></div>
-            </div>
-          </div>
+          <button type="submit" class="btn-login">Sign in</button>
+          <div class="login-divider"><span>or</span></div>
+          <button type="button" id="btn-guest" class="btn-guest">Just look around</button>
         </form>
-
-        <!-- Hardening Log: Before vs After Timeline -->
-        <div class="hardening-timeline" id="hardening-timeline">
-          <div class="timeline-header">
-            <span class="num-bracket">[ 04 ]</span>
-            <h3>HARDENING PROGRESSION // LOG</h3>
-            <button id="btn-clear-history" class="btn-mini">CLEAR</button>
-          </div>
-          <div id="timeline-body" class="timeline-body">
-            <div class="empty-timeline">
-              Run test suite, modify rule to structured or regex, and retest to observe the empirical attack coverage delta.
-            </div>
-          </div>
-        </div>
-
-        <!-- System Architecture Layer Disclaimer -->
-        <div class="boundary-manifesto">
-          <span class="manifesto-title">ARCHITECTURAL BOUNDARY:</span>
-          <p>
-            Command matchers observe text prior to OS execution. They cannot intercept runtime POSIX subshells <code>$(which git)</code>, Git configuration aliases, or pre-commit hook bypasses without lower-layer controls.
-          </p>
-        </div>
-      </section>
-
-      <!-- Right Panel: Test Matrix & Coverage Summary -->
-      <section class="console-panel results-bench">
-        <div class="panel-bar">
-          <div class="panel-heading">
-            <span class="num-bracket">[ 02 ]</span>
-            <h2>ATTACK SUITE EXECUTION MATRIX</h2>
-          </div>
-          <div class="matrix-filter-pills" role="tablist">
-            <button class="pill-tab active" data-filter="all">ALL [14]</button>
-            <button class="pill-tab tab-missed" data-filter="missed">MISSED [<span id="badge-missed">0</span>]</button>
-            <button class="pill-tab tab-blocked" data-filter="blocked">BLOCKED [<span id="badge-blocked">0</span>]</button>
-            <button class="pill-tab tab-na" data-filter="not-applicable">HOOK LAYER [<span id="badge-na">2</span>]</button>
-          </div>
-        </div>
-
-        <!-- Telemetry Summary Block -->
-        <div class="telemetry-block">
-          <div class="telemetry-score-zone">
-            <span class="telemetry-kicker">CORPUS ATTACK COVERAGE</span>
-            <div class="score-display">
-              <span id="score-pct" class="score-pct">0%</span>
-              <div class="score-meta">
-                <span id="score-fraction" class="score-fraction">0 / 12 APPLICABLE</span>
-                <span class="score-label">ADVERSARIAL CASES INTERCEPTED</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="telemetry-verdict-zone">
-            <span class="telemetry-kicker">EVALUATION VERDICT</span>
-            <div id="verdict-banner" class="verdict-tag verdict-pending">READY TO EXECUTE</div>
-            <span class="verdict-disclaimer">Measured against curated 14-case corpus. Not a formal security proof.</span>
-          </div>
-
-          <div class="telemetry-layers-zone">
-            <span class="telemetry-kicker">LAYER ISOLATION READOUT</span>
-            <div class="layer-meters">
-              <div class="meter-row">
-                <span class="layer-code">LAYER A</span>
-                <span class="meter-label">COMMAND MATCHER:</span>
-                <span id="meter-matcher" class="meter-val">0/0</span>
-              </div>
-              <div class="meter-row">
-                <span class="layer-code">LAYER B</span>
-                <span class="meter-label">SHELL INTERPRETATION:</span>
-                <span id="meter-shell" class="meter-val">0/0</span>
-              </div>
-              <div class="meter-row">
-                <span class="layer-code">LAYER C</span>
-                <span class="meter-label">GIT HOOK LAYER:</span>
-                <span id="meter-hook" class="meter-val">2 NON-APPLICABLE</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Attack Suite Output Terminal / Test Runner -->
-        <div class="test-runner-container">
-          <div class="terminal-table-header">
-            <span class="col-status">STATE</span>
-            <span class="col-id">CASE ID</span>
-            <span class="col-cmd">REPRESENTATION / COMMAND</span>
-            <span class="col-cat">CATEGORY</span>
-            <span class="col-layer">ENFORCEMENT LAYER</span>
-          </div>
-          <div id="test-runner-list" class="test-runner-list">
-            <!-- Dynamically populated rows -->
-          </div>
-        </div>
-
-        <!-- Forensic Evidence Dossier (What Your Guardrail Missed) -->
-        <div id="forensic-dossier" class="forensic-dossier">
-          <div class="dossier-top">
-            <div class="dossier-heading">
-              <span class="num-bracket">[ 03 ]</span>
-              <span class="dossier-kicker">FORENSIC EVIDENCE FILE:</span>
-              <span id="dossier-case-id" class="dossier-id">TC-03</span>
-              <h3 id="dossier-title">Working directory flag before subcommand</h3>
-            </div>
-            <div id="dossier-badge" class="case-verdict-tag missed">MISSED</div>
-          </div>
-
-          <div class="dossier-evidence-block">
-            <span class="dossier-label">ATTACK REPRESENTATION &amp; BREAKING REGION</span>
-            <div class="command-annotated">
-              <pre><code id="dossier-code">git -C /repo commit -m "fix: bug"</code></pre>
-              <div class="token-marker" id="dossier-marker">
-                <span class="marker-pointer">▲</span>
-                <span class="marker-text" id="dossier-pointer-text">Interleaved global flag separates executable from subcommand</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="dossier-details-grid">
-            <div class="dossier-detail">
-              <span class="dossier-label">INTENDED OPERATION</span>
-              <p id="dossier-intent" class="dossier-text"></p>
-            </div>
-            <div class="dossier-detail">
-              <span class="dossier-label">ENFORCEMENT LAYER</span>
-              <p id="dossier-layer" class="dossier-text"></p>
-            </div>
-            <div class="dossier-detail">
-              <span class="dossier-label">WHY THIS MATTERS</span>
-              <p id="dossier-matters" class="dossier-text"></p>
-            </div>
-          </div>
-
-          <div class="dossier-finding-box" id="dossier-finding-box">
-            <div class="finding-header">
-              <span class="finding-icon">⌁</span>
-              <span class="finding-title">FORENSIC FAILURE ANALYSIS</span>
-            </div>
-            <p id="dossier-explanation" class="finding-body"></p>
-          </div>
-
-          <div class="dossier-hardening-box">
-            <div class="hardening-header">
-              <span class="hardening-icon">↳</span>
-              <span class="hardening-title">ENGINEERING HARDENING PATH</span>
-            </div>
-            <p id="dossier-hardening" class="hardening-body"></p>
-          </div>
-        </div>
-
-      </section>
-
-    </main>
-
-    <!-- Bottom Technical Documentation / Methodology / Assessment Reflection -->
-    <section class="methodology-section">
-      <div class="methodology-bar">
-        <div class="methodology-tabs">
-          <button class="meth-tab active" data-pane="pane-model">01 / THREAT MODEL &amp; PARADOX</button>
-          <button class="meth-tab" data-pane="pane-taxonomy">02 / LAYER TAXONOMY</button>
-          <button class="meth-tab" data-pane="pane-limits">03 / KNOWN LIMITATIONS</button>
-          <button class="meth-tab" data-pane="pane-ctaio">04 / CTAIO ASSESSMENT REFLECTION</button>
-        </div>
-        <span class="doc-tag">TECHNICAL BRIEFING</span>
-      </div>
-
-      <div class="methodology-content">
-        <!-- Pane 1: Model -->
-        <div id="pane-model" class="meth-pane active">
-          <div class="briefing-grid">
-            <div class="briefing-card">
-              <h4>The Guardrail Paradox: Syntax vs Intent</h4>
-              <p>
-                Developers configure tool execution restrictions on coding agents using naive string filters: <code>git commit</code>, <code>curl | bash</code>, <code>rm -rf</code>.
-              </p>
-              <p>
-                They believe: <em>"The agent cannot commit code."</em><br>
-                The mathematical reality: <em>"The agent cannot emit this specific 10-byte UTF-8 string."</em>
-              </p>
-              <p>
-                Because shell execution environments possess rich parsing semantics (aliases, subshells, path prefixes, interleaved flags, process substitution), a literal string matcher fails against 60%+ of realistic command transformations.
-              </p>
-            </div>
-            <div class="briefing-card">
-              <h4>Why Deterministic &amp; Zero LLMs?</h4>
-              <p>
-                Many AI evaluation products introduce LLM judges to "grade" security. This is an anti-pattern. LLM judges are non-deterministic, slow, vulnerable to token order, and introduce hallucinated security boundaries.
-              </p>
-              <p>
-                Guardrail Lab's core evaluator is 100% deterministic client-side JavaScript. Identical inputs yield bit-for-bit identical verdicts across browsers and operating systems.
-              </p>
-            </div>
-            <div class="briefing-card">
-              <h4>Corpus Coverage Is Not A Security Proof</h4>
-              <p>
-                Scoring 100% on this 14-case corpus means the guardrail successfully intercepted these 14 specific vectors. It does NOT prove security against arbitrary unbounded POSIX shell expansions. Real defense requires tokenized argument validation at the execution boundary and branch protection at the repository platform.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pane 2: Taxonomy -->
-        <div id="pane-taxonomy" class="meth-pane">
-          <div class="taxonomy-table">
-            <div class="tax-row">
-              <span class="tax-layer">LAYER A</span>
-              <span class="tax-name">Command Pattern Matcher</span>
-              <span class="tax-desc">Filters string text before passing to child process. Bypassed via whitespace, flags (-C), and path prefixes (/usr/bin/git).</span>
-              <span class="tax-mitigation">Fix: Parse executable basename and tokenized arguments.</span>
-            </div>
-            <div class="tax-row">
-              <span class="tax-layer">LAYER B</span>
-              <span class="tax-name">Shell Interpretation</span>
-              <span class="tax-desc">POSIX shell expands $(which git), compound chains (&amp;&amp;, ;), and escapes (\git). Matchers anchored with ^ fail.</span>
-              <span class="tax-mitigation">Fix: Restrict shell chaining or inspect each pipeline stage independently.</span>
-            </div>
-            <div class="tax-row">
-              <span class="tax-layer">LAYER C</span>
-              <span class="tax-name">Git Hook Layer</span>
-              <span class="tax-desc">Client pre-commit hooks. Completely bypassed via <code>--no-verify</code> or <code>-n</code>. Irrelevant to command filters.</span>
-              <span class="tax-mitigation">Fix: Enforce server-side branch protections and CI status checks.</span>
-            </div>
-            <div class="tax-row">
-              <span class="tax-layer">LAYER D</span>
-              <span class="tax-name">Repository Workflow</span>
-              <span class="tax-desc">Branch protection, signed commits, and mandatory PR approvals on GitHub/GitLab. The only immune layer.</span>
-              <span class="tax-mitigation">Fix: Platform-level RBAC and branch lockdown.</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pane 3: Limitations -->
-        <div id="pane-limits" class="meth-pane">
-          <ul class="limits-checklist">
-            <li><strong>Finite Corpus:</strong> Curated 14 vectors represent high-frequency transformations, but shell grammar allows infinite combinatorial encoding (e.g. <code>eval $(base64 -d ...)</code>).</li>
-            <li><strong>No Live Process Tracing:</strong> Static simulation does not observe eBPF syscalls or dynamic binary renames on disk.</li>
-            <li><strong>No Host Environment State:</strong> Does not query local <code>.gitconfig</code> for active aliases; models the syntactic form of an alias invocation.</li>
-            <li><strong>Harness Focus:</strong> Built specifically to evaluate developer-defined command regexes and token filters.</li>
-          </ul>
-        </div>
-
-        <!-- Pane 4: CTAIO Reflection -->
-        <div id="pane-ctaio" class="meth-pane">
-          <div class="ctaio-reflection-box">
-            <div class="refl-item">
-              <span class="refl-label">WHAT I NOTICED</span>
-              <p>Teams building AI coding agent platforms routinely rely on blocklists of literal strings (<code>git commit</code>, <code>rm -rf</code>, <code>curl | bash</code>). They confuse having written a string rule with having enforced an operational policy.</p>
-            </div>
-            <div class="refl-item">
-              <span class="refl-label">WHAT ASSUMPTION I ATTACKED</span>
-              <p>The assumption that a pattern matcher intercepts an operation. In shell command syntax, the exact same semantic intent takes dozens of equivalent forms. An agent that outputs <code>git -C /repo commit</code> easily bypasses naive filters.</p>
-            </div>
-            <div class="refl-item">
-              <span class="refl-label">WHAT I DELIBERATELY KEPT SMALL</span>
-              <p>Instead of an unmaintainable full POSIX grammar parser or an unpredictable LLM judge, I built a deterministic 14-vector adversarial harness with explicit layer categorization, instant Before/After delta tracking, and 13 unit tests for the tester itself.</p>
-            </div>
-            <div class="refl-item">
-              <span class="refl-label">THE TAKEAWAY</span>
-              <p>Defenses must be tested, not assumed. And defense-in-depth requires structured token enforcement at the agent boundary combined with immutable server-side policies at the repository boundary.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Instrument Footer -->
-    <footer class="console-footer">
-      <div class="footer-segment">
-        <span class="footer-title">GUARDRAIL / LAB</span>
-        <span class="footer-meta">v1.0.0-RELEASE // DETERMINISTIC DEFENSIVE HARNESS</span>
-      </div>
-      <div class="footer-segment text-right">
-        <span class="footer-meta">CTAIO.DEV ENGINEERING ASSESSMENT ARTIFACT // ZERO EXTERNAL DEPENDENCIES</span>
-      </div>
-    </footer>
-
-  </div>
-
-  <!-- Engine Invariant Diagnostics Modal -->
-  <div id="modal-self-tests" class="modal-backdrop hidden">
-    <div class="modal-instrument-window">
-      <div class="modal-top-bar">
-        <span class="modal-title">DIAGNOSTIC TEST RUNNER // TEST-THE-TESTER</span>
-        <button id="btn-close-modal" class="btn-modal-close" aria-label="Close modal">✕</button>
-      </div>
-      <div class="modal-scroll-area">
-        <div class="diagnostic-intro">
-          Verifying that Guardrail Lab's deterministic evaluation engine satisfies all core safety, idempotency, and layer isolation invariants:
-        </div>
-        <div id="modal-test-output" class="modal-test-output">
-          <!-- Populated dynamically via test engine -->
-        </div>
-      </div>
-      <div class="modal-bottom-bar">
-        <span id="modal-test-summary" class="modal-summary-badge">13 / 13 TESTS PASSED</span>
-        <button id="btn-dismiss-modal" class="btn-preset">DISMISS</button>
       </div>
     </div>
   </div>
 
-  <!-- ES6 Module Entrypoint -->
+  <!-- ======================= APP ======================= -->
+  <div id="app-shell" class="app-layout hidden">
+
+    <!-- Workbench rail -->
+    <aside class="side-rail">
+      <div class="rail-brand">
+        <svg class="logo-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5 20 6v6c0 5-3.4 8.3-8 9.5C7.4 20.3 4 17 4 12V6l8-3.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8.8 12 2.2 2.2 4.2-4.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="rail-brand-text">
+          <span class="rail-brand-name">Guardrail Lab</span>
+          <span class="rail-brand-sub">guardrail test bench</span>
+        </div>
+      </div>
+
+      <nav class="rail-nav" aria-label="Workflow steps">
+        <span class="rail-label">Workflow</span>
+        <span class="rail-item active"><span class="rail-num">1</span> Set up</span>
+        <span class="rail-item" id="nav-attack"><span class="rail-num">2</span> Run tests</span>
+        <span class="rail-item" id="nav-evidence"><span class="rail-num">3</span> Review</span>
+        <span class="rail-item" id="nav-harden"><span class="rail-num">4</span> Improve</span>
+      </nav>
+
+      <div class="rail-foot">
+        <button id="btn-theme-toggle" class="rail-theme" title="Switch theme">◐ Dark</button>
+        <div class="user-chip" id="user-chip">
+          <span class="user-initials" id="user-initials">G</span>
+          <span class="user-name" id="user-name">Guest</span>
+          <button id="btn-signout" class="btn-signout" title="Sign out">Sign out</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main column -->
+    <div class="main-col">
+
+      <div class="statusbar">
+        <div class="status-left">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span class="status-live">LIVE</span>
+          <span class="status-sep">//</span>
+          <span class="status-item">CORPUS <strong id="corpus-count">20</strong> VECTORS</span>
+          <span class="status-item status-hide-sm">COVERAGE + PRECISION</span>
+        </div>
+        <div class="status-right">
+          <span class="status-item"><i class="sdot sdot-green"></i>ENGINE DETERMINISTIC</span>
+          <span class="status-item status-hide-sm"><i class="sdot sdot-gray"></i>ZERO EXECUTION</span>
+          <span class="status-item status-clock" id="utc-clock">--:--:-- UTC</span>
+          <button id="btn-self-tests" class="util-checks" title="Run the engine's own self-checks">✓ 16/16 CHECKS</button>
+        </div>
+      </div>
+
+      <section class="briefing-strip">
+        <div class="briefing-main">
+          <span class="briefing-tag">What this does</span>
+          <p>Find out whether your guardrail blocks <strong>what you meant to block</strong> — or just the <strong>exact words</strong> you typed.</p>
+        </div>
+        <div class="briefing-specs">
+          <span><strong>20</strong> test commands</span>
+          <span class="spec-dot">·</span>
+          <span><strong>3</strong> check levels</span>
+          <span class="spec-dot">·</span>
+          <span>same result <strong>every run</strong></span>
+        </div>
+      </section>
+
+      <main class="console-body">
+
+        <!-- Left: setup -->
+        <section class="console-panel control-bench">
+          <div class="panel-bar">
+            <div class="panel-heading">
+              <span class="num-bracket">[ 1 ]</span>
+              <h2>Set up your test</h2>
+            </div>
+            <span class="subtle-status" id="control-status">Ready</span>
+          </div>
+
+          <form id="guardrail-form" class="bench-body">
+            <div class="control-group">
+              <div class="group-header">
+                <label for="policy-select">What should be blocked?</label>
+              </div>
+              <div class="custom-select">
+                <select id="policy-select">
+                  <option value="git-commit" selected>Block git commit — stop commits going into git</option>
+                  <option value="curl-bash">Block curl | bash — stop remote scripts from running</option>
+                </select>
+              </div>
+              <p id="policy-desc" class="param-desc">Stop an agent from committing changes to git.</p>
+            </div>
+
+            <div class="control-group">
+              <div class="group-header">
+                <label for="mode-select">How should the rule check commands?</label>
+                <span class="field-meta" id="mode-meta">TEXT MATCH</span>
+              </div>
+              <div class="custom-select">
+                <select id="mode-select">
+                  <option value="literal" selected>Exact text match — checks if the rule text appears as-is</option>
+                  <option value="regex">Pattern (regex) — matches using a pattern</option>
+                  <option value="wildcard">Wildcard — uses * and ? to match parts</option>
+                  <option value="structured">Smart tokens — finds the command name and action separately</option>
+                </select>
+              </div>
+              <p id="mode-desc" class="param-desc">Checks if your rule appears in the command exactly as written.</p>
+            </div>
+
+            <div class="control-group">
+              <div class="group-header">
+                <label for="rule-input">Your rule</label>
+                <span class="field-meta rule-type" id="rule-type-indicator">TEXT</span>
+              </div>
+              <div class="rule-terminal-input">
+                <span class="terminal-prefix">&gt;</span>
+                <input type="text" id="rule-input" value="git commit" spellcheck="false" autocomplete="off" placeholder="e.g. git commit">
+              </div>
+              <div id="rule-error" class="rule-diagnostic-err hidden" role="alert"></div>
+            </div>
+
+            <div class="parameter-presets">
+              <span class="preset-label">Try a preset:</span>
+              <div class="preset-buttons">
+                <button type="button" class="btn-preset active" id="preset-naive">
+                  <span class="chip-dot"></span> Simple text
+                </button>
+                <button type="button" class="btn-preset" id="preset-regex">
+                  <span class="chip-dot"></span> Pattern
+                </button>
+                <button type="button" class="btn-preset" id="preset-hardened">
+                  <span class="chip-dot"></span> Smart tokens
+                </button>
+              </div>
+            </div>
+
+            <div class="instrument-cta">
+              <button type="submit" id="btn-run" class="btn-instrument">
+                <span class="btn-icon">▶</span>
+                <span id="btn-run-text" class="btn-text">Run the test</span>
+                <span class="btn-counter">(20 cases)</span>
+                <span class="btn-arrow">→</span>
+              </button>
+            </div>
+
+            <div id="diagnostic-ticker" class="diagnostic-ticker hidden">
+              <div class="ticker-header">
+                <span class="ticker-dot"></span>
+                <span class="ticker-title">RUNNING THE TESTS</span>
+              </div>
+              <div class="ticker-stage" id="ticker-stage-text">1/5 Checking the exact command…</div>
+              <div class="ticker-progress-bar">
+                <div class="ticker-progress-fill" id="ticker-progress-fill"></div>
+              </div>
+            </div>
+          </form>
+
+          <div class="hardening-timeline" id="hardening-timeline">
+            <div class="timeline-header">
+              <span class="num-bracket">[ 4 ]</span>
+              <h3>YOUR PROGRESS</h3>
+              <button id="btn-clear-history" class="btn-mini">Clear</button>
+            </div>
+            <div id="timeline-body" class="timeline-body">
+              <div class="empty-timeline">
+                Run a test, then change your rule and run again — you'll see your score change here.
+              </div>
+            </div>
+          </div>
+
+          <div class="boundary-manifesto">
+            <span class="manifesto-title">Good to know</span>
+            <p>
+              A text rule only reads the command before it runs. It can't catch things the shell figures out later — like <code>$(which git)</code>, git nicknames, or <code>--no-verify</code>. Those need checks at other levels.
+            </p>
+          </div>
+        </section>
+
+        <!-- Right: results -->
+        <section class="console-panel results-bench">
+          <div class="panel-bar">
+            <div class="panel-heading">
+              <span class="num-bracket">[ 2 ]</span>
+              <h2>Test results</h2>
+            </div>
+            <div class="matrix-filter-pills" role="tablist">
+              <button class="pill-tab active" data-filter="all">All [14]</button>
+              <button class="pill-tab tab-missed" data-filter="missed">Missed [<span id="badge-missed">0</span>]</button>
+              <button class="pill-tab tab-blocked" data-filter="blocked">Blocked [<span id="badge-blocked">0</span>]</button>
+              <button class="pill-tab tab-fp" data-filter="false-positive">False alarms [<span id="badge-fp">0</span>]</button>
+              <button class="pill-tab tab-na" data-filter="not-applicable">Git-hook tests [<span id="badge-na">2</span>]</button>
+            </div>
+          </div>
+
+          <div class="scoreboard">
+            <i class="corner c-tl" aria-hidden="true"></i>
+            <i class="corner c-tr" aria-hidden="true"></i>
+            <i class="corner c-bl" aria-hidden="true"></i>
+            <i class="corner c-br" aria-hidden="true"></i>
+            <div class="score-main">
+              <span class="telemetry-kicker">Coverage</span>
+              <div class="score-display">
+                <span id="score-pct" class="score-pct">0%</span>
+                <div class="score-meta">
+                  <span id="score-fraction" class="score-fraction">0 / 12 blocked</span>
+                  <span class="score-label">test cases your rule caught</span>
+                </div>
+              </div>
+              <div class="score-verdict-row">
+                <div id="verdict-banner" class="verdict-tag verdict-pending">Ready to run</div>
+                <span class="verdict-disclaimer">Tested against 14 attack + 6 benign cases. Not a proof of security.</span>
+              </div>
+              <div class="fp-row">
+                <span class="fp-kicker">False alarms</span>
+                <span id="fp-fraction" class="fp-val">0 / 6</span>
+                <span class="fp-note">innocent commands your rule blocked — precision matters as much as coverage</span>
+              </div>
+              <div id="fp-warn" class="fp-warn hidden">⚠ Your rule blocks innocent commands too. Narrow it until the false alarms disappear.</div>
+            </div>
+            <div class="score-side">
+              <span class="telemetry-kicker">Where your rule works</span>
+              <div class="layer-meters">
+                <div class="meter-row">
+                  <span class="layer-code">Text check</span>
+                  <span class="meter-label">plain text</span>
+                  <span id="meter-matcher" class="meter-val">0/0</span>
+                </div>
+                <div class="meter-row">
+                  <span class="layer-code">Shell tricks</span>
+                  <span class="meter-label">chains &amp; shortcuts</span>
+                  <span id="meter-shell" class="meter-val">0/0</span>
+                </div>
+                <div class="meter-row">
+                  <span class="layer-code">Git hooks</span>
+                  <span class="meter-label">git's own checks</span>
+                  <span id="meter-hook" class="meter-val">2 skipped</span>
+                </div>
+              </div>
+            </div>
+            <div class="score-strip">
+              <div id="result-strip" class="result-strip" role="group" aria-label="Test case results strip"></div>
+              <div class="strip-legend">
+                <span><i class="sw sw-blocked"></i> blocked</span>
+                <span><i class="sw sw-missed"></i> missed</span>
+                <span><i class="sw sw-na"></i> git-hook test</span>
+                <span class="strip-hint">click a block to inspect the case</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="test-runner-container">
+            <div class="terminal-table-header">
+              <span class="col-status">Result</span>
+              <span class="col-id">Case</span>
+              <span class="col-cmd">Command</span>
+              <span class="col-cat">Type</span>
+              <span class="col-layer">Check level</span>
+            </div>
+            <div id="test-runner-list" class="test-runner-list">
+            </div>
+          </div>
+
+          <div id="forensic-dossier" class="forensic-dossier">
+            <div class="dossier-top">
+              <div class="dossier-heading">
+                <span class="num-bracket">[ 3 ]</span>
+                <span class="dossier-kicker">Case details:</span>
+                <span id="dossier-case-id" class="dossier-id">TC-03</span>
+                <h3 id="dossier-title">Flag placed before the action</h3>
+              </div>
+              <div id="dossier-badge" class="case-verdict-tag missed">MISSED</div>
+            </div>
+
+            <div class="dossier-evidence-block">
+              <span class="dossier-label">The test command</span>
+              <div class="command-annotated">
+                <pre><code id="dossier-code">git -C /repo commit -m "fix: bug"</code></pre>
+                <div class="token-marker" id="dossier-marker">
+                  <span class="marker-pointer">▲</span>
+                  <span class="marker-text" id="dossier-pointer-text">A flag sits between "git" and "commit", so the exact text doesn't match — but it still commits.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dossier-details-grid">
+              <div class="dossier-detail">
+                <span class="dossier-label">What it does</span>
+                <p id="dossier-intent" class="dossier-text"></p>
+              </div>
+              <div class="dossier-detail">
+                <span class="dossier-label">Check level</span>
+                <p id="dossier-layer" class="dossier-text"></p>
+              </div>
+              <div class="dossier-detail">
+                <span class="dossier-label">Why it matters</span>
+                <p id="dossier-matters" class="dossier-text"></p>
+              </div>
+            </div>
+
+            <div class="dossier-finding-box" id="dossier-finding-box">
+              <div class="finding-header">
+                <span class="finding-icon">!</span>
+                <span class="finding-title">WHY IT SLIPPED THROUGH</span>
+              </div>
+              <p id="dossier-explanation" class="finding-body"></p>
+            </div>
+
+            <div class="dossier-hardening-box">
+              <div class="hardening-header">
+                <span class="hardening-icon">↳</span>
+                <span class="hardening-title">HOW TO FIX IT</span>
+              </div>
+              <p id="dossier-hardening" class="hardening-body"></p>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+
+      <!-- Guides -->
+      <section class="methodology-section">
+        <div class="methodology-bar">
+          <div class="methodology-tabs">
+            <button class="meth-tab active" data-pane="pane-model">How it works</button>
+            <button class="meth-tab" data-pane="pane-taxonomy">The 4 check levels</button>
+            <button class="meth-tab" data-pane="pane-limits">What this can't do</button>
+            <button class="meth-tab" data-pane="pane-ctaio">Why I built this</button>
+          </div>
+          <span class="doc-tag">GUIDES</span>
+        </div>
+
+        <div class="methodology-content">
+          <div id="pane-model" class="meth-pane active">
+            <div class="briefing-grid">
+              <div class="briefing-card">
+                <h4>The problem with simple rules</h4>
+                <p>
+                  Teams block AI agents with simple text rules like <code>git commit</code>. They think: <em>"the agent can't commit."</em>
+                </p>
+                <p>
+                  But the rule only stops that exact text. The same commit can be written many different ways — and most of them slip right past a simple text rule.
+                </p>
+              </div>
+              <div class="briefing-card">
+                <h4>Why not use an AI to judge?</h4>
+                <p>
+                  Some tools use an AI to grade security. That's slow, gives different answers each time, and can be tricked.
+                </p>
+                <p>
+                  This lab uses plain, fixed logic instead. The same input always gives the same answer — on any computer, every time.
+                </p>
+              </div>
+              <div class="briefing-card">
+                <h4>A perfect score is not a proof</h4>
+                <p>
+                  Scoring 100% here means your rule caught these 14 attack cases. It doesn't mean it's secure against everything.
+                </p>
+                <p>
+                  Real safety needs checks at several levels — this tool shows you where your text rule stops working.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div id="pane-taxonomy" class="meth-pane">
+            <div class="taxonomy-table">
+              <div class="tax-row">
+                <span class="tax-layer">Level 1</span>
+                <span class="tax-name">Text check</span>
+                <span class="tax-desc">Reads the command text before it runs. Fooled by extra flags, full paths, and extra spacing.</span>
+                <span class="tax-mitigation">Fix: split the command into parts (command name + action) and check those.</span>
+              </div>
+              <div class="tax-row">
+                <span class="tax-layer">Level 2</span>
+                <span class="tax-name">Shell tricks</span>
+                <span class="tax-desc">The shell understands chains (&&, ;) and $(...) before anything runs. Rules expecting the command at the start fail.</span>
+                <span class="tax-mitigation">Fix: check each part of a chained command separately, or block chaining.</span>
+              </div>
+              <div class="tax-row">
+                <span class="tax-layer">Level 3</span>
+                <span class="tax-name">Git hooks <em class="tax-note">conceptual — not executed by this tool</em></span>
+                <span class="tax-desc">Git's own safety checks live inside the repo. The --no-verify flag turns them off completely.</span>
+                <span class="tax-mitigation">Fix: enforce rules on the server (GitHub / GitLab), not just on the computer.</span>
+              </div>
+              <div class="tax-row">
+                <span class="tax-layer">Level 4</span>
+                <span class="tax-name">Repo settings <em class="tax-note">conceptual — not executed by this tool</em></span>
+                <span class="tax-desc">Branch protection and required reviews on GitHub / GitLab. Agents can't switch these off.</span>
+                <span class="tax-mitigation">Fix: turn on branch protection and required approvals.</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="pane-limits" class="meth-pane">
+            <ul class="limits-checklist">
+              <li><strong>Only 20 tests:</strong> the shell can spell the same command in endless ways — these cover the most common tricks, plus innocent lookalikes.</li>
+              <li><strong>No live watching:</strong> this is a simulation. It doesn't track what actually runs on your computer.</li>
+              <li><strong>Doesn't read your git settings:</strong> it can't know the personal command nicknames you've set up.</li>
+              <li><strong>Made for one job:</strong> checking the text rules and command filters that developers write for their agents. It assumes an agent that emits command variants — sloppy, clever, or prompt-injected — not a nation-state attacker. It tests the filter, not the agent's intent.</li>
+            </ul>
+          </div>
+
+          <div id="pane-ctaio" class="meth-pane">
+            <div class="ctaio-reflection-box">
+              <div class="refl-item">
+                <span class="refl-label">WHAT I NOTICED</span>
+                <p>Teams building AI coding tools usually block bad actions with lists of exact words — <code>git commit</code>, <code>rm -rf</code>, <code>curl | bash</code>. Writing the rule feels like enforcing it. It isn't.</p>
+              </div>
+              <div class="refl-item">
+                <span class="refl-label">WHAT I TESTED</span>
+                <p>The idea that a text pattern stops an action. The same action has dozens of valid spellings — <code>git -C /repo commit</code> walks right past a naive rule.</p>
+              </div>
+              <div class="refl-item">
+                <span class="refl-label">WHAT I KEPT SMALL</span>
+                <p>Instead of a giant shell parser or an unpredictable AI judge, I built a small fixed test set: 14 tricky commands plus 6 innocent lookalikes (so overblocking gets caught too), clear check levels, before/after score tracking, and 16 self-checks for the engine itself.</p>
+              </div>
+              <div class="refl-item">
+                <span class="refl-label">THE TAKEAWAY</span>
+                <p>Test your defenses — don't just assume they work. And layer them: smart checks where the agent runs, plus server rules that can't be switched off.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="console-footer">
+        <div class="footer-segment">
+          <span class="footer-title">Guardrail Lab</span>
+          <span class="footer-meta">v1.0 · Runs entirely in your browser · No data leaves this page</span>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- Engine self-checks modal -->
+  <div id="modal-self-tests" class="modal-backdrop hidden">
+    <div class="modal-instrument-window">
+      <div class="modal-top-bar">
+        <span class="modal-title">ENGINE SELF-CHECKS</span>
+        <button id="btn-close-modal" class="btn-modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-scroll-area">
+        <div class="diagnostic-intro">
+          Making sure the test engine itself works correctly — 13 checks on the core logic:
+        </div>
+        <div id="modal-test-output" class="modal-test-output">
+        </div>
+      </div>
+      <div class="modal-bottom-bar">
+        <span id="modal-test-summary" class="modal-summary-badge">13 / 13 checks passed</span>
+        <button id="btn-dismiss-modal" class="btn-preset">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="app.js"></script>
 </body>
 </html>
