@@ -28,7 +28,6 @@ const elements = {
   navEvidence: document.getElementById('nav-evidence'),
   navHarden: document.getElementById('nav-harden'),
   btnSelfTests: document.getElementById('btn-self-tests'),
-  btnThemeToggle: document.getElementById('btn-theme-toggle'),
 
   // Form Controls
   policySelect: document.getElementById('policy-select'),
@@ -286,21 +285,6 @@ function bindEvents() {
   elements.modalSelfTests.addEventListener('click', (e) => {
     if (e.target === elements.modalSelfTests) closeSelfTestsModal();
   });
-
-  // Theme Toggle (Defaults to light theme)
-  if (elements.btnThemeToggle) {
-    elements.btnThemeToggle.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme') || 'light';
-      const next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('guardrail_theme', next);
-      elements.btnThemeToggle.textContent = next === 'dark' ? '☼ LIGHT' : '◐ DARK';
-    });
-
-    const savedTheme = localStorage.getItem('guardrail_theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    elements.btnThemeToggle.textContent = savedTheme === 'dark' ? '☼ LIGHT' : '◐ DARK';
-  }
 }
 
 function setActivePreset(button) {
