@@ -92,16 +92,6 @@ const elements = {
   methTabs: document.querySelectorAll('.meth-tab'),
   methPanes: document.querySelectorAll('.meth-pane'),
 
-  // Login Screen (demo only — no real authentication)
-  loginScreen: document.getElementById('login-screen'),
-  appShell: document.getElementById('app-shell'),
-  loginForm: document.getElementById('login-form'),
-  loginName: document.getElementById('login-name'),
-  btnGuest: document.getElementById('btn-guest'),
-  userInitials: document.getElementById('user-initials'),
-  userName: document.getElementById('user-name'),
-  btnSignout: document.getElementById('btn-signout'),
-
   // Invariant Modal
   modalSelfTests: document.getElementById('modal-self-tests'),
   btnCloseModal: document.getElementById('btn-close-modal'),
@@ -115,7 +105,6 @@ const elements = {
  */
 function init() {
   bindEvents();
-  setupLogin();
   loadPolicy(state.policyId);
   tickClock();
   setInterval(tickClock, 1000);
@@ -130,63 +119,6 @@ function tickClock() {
   if (!elements.utcClock) return;
   const d = new Date();
   elements.utcClock.textContent = d.toISOString().slice(11, 19) + ' UTC';
-}
-
-/**
- * Demo login — no real authentication. Any details work, nothing is sent anywhere.
- */
-function setupLogin() {
-  const saved = readSavedUser();
-  if (saved) {
-    enterApp(saved.name);
-  } else {
-    showLogin();
-  }
-
-  elements.loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = (elements.loginName.value || '').trim() || 'Guest';
-    saveUser(name);
-    enterApp(name);
-  });
-
-  elements.btnGuest.addEventListener('click', () => {
-    saveUser('Guest');
-    enterApp('Guest');
-  });
-
-  elements.btnSignout.addEventListener('click', () => {
-    try { localStorage.removeItem('guardrail_user'); } catch (err) { /* ignore */ }
-    showLogin();
-  });
-}
-
-function readSavedUser() {
-  try {
-    const raw = localStorage.getItem('guardrail_user');
-    return raw ? JSON.parse(raw) : null;
-  } catch (err) {
-    return null;
-  }
-}
-
-function saveUser(name) {
-  try {
-    localStorage.setItem('guardrail_user', JSON.stringify({ name }));
-  } catch (err) { /* ignore */ }
-}
-
-function showLogin() {
-  elements.loginScreen.classList.remove('hidden');
-  elements.appShell.classList.add('hidden');
-}
-
-function enterApp(name) {
-  elements.loginScreen.classList.add('hidden');
-  elements.appShell.classList.remove('hidden');
-  const display = name || 'Guest';
-  elements.userName.textContent = display;
-  elements.userInitials.textContent = display.trim().charAt(0).toUpperCase() || 'G';
 }
 
 /**

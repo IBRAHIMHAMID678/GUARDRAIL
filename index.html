@@ -12,49 +12,9 @@
 </head>
 <body>
 
-  <!-- ======================= LOGIN SCREEN (demo only, no real sign-in) ======================= -->
-  <div id="login-screen" class="login-screen">
-    <div class="login-card">
-      <div class="login-left">
-        <div class="login-brand">
-          <svg class="logo-svg logo-lg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5 20 6v6c0 5-3.4 8.3-8 9.5C7.4 20.3 4 17 4 12V6l8-3.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m8.8 12 2.2 2.2 4.2-4.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span class="login-brand-name">Guardrail Lab</span>
-        </div>
-        <h1 class="login-headline">Test your AI agent's guardrails <em>before</em> someone else does.</h1>
-        <p class="login-sub">Write a rule like <code>git commit</code>, and we'll throw 14 sneaky commands at it — showing you exactly which ones slipped through and why.</p>
-        <ul class="login-features">
-          <li><span class="login-feat-icon">✓</span> 14 real-world tricky commands to test against</li>
-          <li><span class="login-feat-icon">✓</span> See exactly what your rule missed — and how to fix it</li>
-          <li><span class="login-feat-icon">✓</span> Watch your score climb as you improve your rule</li>
-        </ul>
-        <div class="login-footnote">Runs 100% in your browser · Nothing is uploaded anywhere</div>
-      </div>
-      <div class="login-right">
-        <h2 class="login-title">Sign in</h2>
-        <p class="login-hint">This is a demo sign-in. Any name and email works — nothing is sent or stored online.</p>
-        <form id="login-form" class="login-form" novalidate>
-          <div class="login-field">
-            <label for="login-name">Your name</label>
-            <input type="text" id="login-name" placeholder="e.g. Alex Khan" autocomplete="name">
-          </div>
-          <div class="login-field">
-            <label for="login-email">Email</label>
-            <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
-          </div>
-          <div class="login-field">
-            <label for="login-password">Password</label>
-            <input type="password" id="login-password" placeholder="Anything works" autocomplete="current-password">
-          </div>
-          <button type="submit" class="btn-login">Sign in</button>
-          <div class="login-divider"><span>or</span></div>
-          <button type="button" id="btn-guest" class="btn-guest">Just look around</button>
-        </form>
-      </div>
-    </div>
-  </div>
 
   <!-- ======================= APP ======================= -->
-  <div id="app-shell" class="app-layout hidden">
+  <div id="app-shell" class="app-layout">
 
     <!-- Workbench rail -->
     <aside class="side-rail">
@@ -73,14 +33,6 @@
         <span class="rail-item" id="nav-evidence"><span class="rail-num">3</span> Review</span>
         <span class="rail-item" id="nav-harden"><span class="rail-num">4</span> Improve</span>
       </nav>
-
-      <div class="rail-foot">
-        <div class="user-chip" id="user-chip">
-          <span class="user-initials" id="user-initials">G</span>
-          <span class="user-name" id="user-name">Guest</span>
-          <button id="btn-signout" class="btn-signout" title="Sign out">Sign out</button>
-        </div>
-      </div>
     </aside>
 
     <!-- Main column -->
