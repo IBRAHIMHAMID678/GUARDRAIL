@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GUARDRAIL / LAB — Adversarial AI Guardrail Test Console</title>
+  <meta name="description" content="Technical developer instrument testing whether AI coding guardrails defend the intended operation or merely match fragile syntax representations.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="instrument-shell">
+    
+    <!-- Instrument Top Header -->
+    <header class="console-header">
+      <div class="header-brand">
+        <span class="crosshair-marker">⌖</span>
+        <div class="brand-text">
+          <span class="system-id">DEFENSIVE INSTRUMENT // GL-01</span>
+          <h1 class="brand-title">GUARDRAIL / LAB<span class="cursor-blink">_</span></h1>
+        </div>
+      </div>
+
+      <!-- Instrument Pipeline Stage Navigator -->
+      <nav class="pipeline-nav">
+        <span class="step-tag active">01 DEFINE</span>
+        <span class="step-arrow">→</span>
+        <span class="step-tag" id="nav-attack">02 ATTACK</span>
+        <span class="step-arrow">→</span>
+        <span class="step-tag" id="nav-evidence">03 EVIDENCE</span>
+        <span class="step-arrow">→</span>
+        <span class="step-tag" id="nav-harden">04 HARDEN</span>
+      </nav>
+
+      <!-- System Status Indicators -->
+      <div class="header-telemetry">
+        <div class="telemetry-pill">
+          <span class="status-dot green"></span>
+          <span class="pill-label">ENGINE:</span>
+          <span class="pill-val">DETERMINISTIC</span>
+        </div>
+        <div class="telemetry-pill">
+          <span class="status-dot gray"></span>
+          <span class="pill-label">EXECUTION:</span>
+          <span class="pill-val">ZERO-CODE-EVAL</span>
+        </div>
+        <button id="btn-self-tests" class="btn-telemetry" title="View 13 verified engine invariants">
+          <span class="telemetry-icon">✓</span> 13/13 INVARIANTS
+        </button>
+        <button id="btn-theme-toggle" class="btn-theme-toggle" title="Toggle Light / Dark Theme">
+          ◐ THEME
+        </button>
+      </div>
+    </header>
+
+    <!-- Operational Header Strip (First Viewport Immediate Context) -->
+    <section class="operational-banner">
+      <div class="banner-core">
+        <span class="banner-mission-tag">PURPOSE</span>
+        <p class="banner-text">
+          Test whether your guardrail protects the <strong>intended operation</strong> — or only the exact <strong>command string</strong> you wrote.
+        </p>
+      </div>
+      <div class="banner-specs">
+        <span class="spec-item">CORPUS: <strong>14 VECTORS</strong></span>
+        <span class="spec-divider">|</span>
+        <span class="spec-item">TARGET: <strong>TOOL EXECUTION BOUNDARY</strong></span>
+        <span class="spec-divider">|</span>
+        <span class="spec-item">DIAGNOSTIC: <strong>FORENSIC LAYER ISOLATION</strong></span>
+      </div>
+    </section>
+
+    <!-- Main Two-Column Instrument Console -->
+    <main class="console-body">
+      
+      <!-- Left Panel: Control Configuration & Diagnostic Trigger -->
+      <section class="console-panel control-bench">
+        <div class="panel-bar">
+          <div class="panel-heading">
+            <span class="num-bracket">[ 01 ]</span>
+            <h2>DEFINE THE CONTROL</h2>
+          </div>
+          <span class="subtle-status" id="control-status">READY</span>
+        </div>
+
+        <form id="guardrail-form" class="bench-body">
+          <!-- Policy Intent -->
+          <div class="control-group">
+            <div class="group-header">
+              <label for="policy-select">POLICY INTENT (INTENDED OPERATION)</label>
+              <span class="field-meta">SEMANTIC GOAL</span>
+            </div>
+            <div class="custom-select">
+              <select id="policy-select">
+                <option value="git-commit" selected>Block git commit [Version Control Mutation]</option>
+                <option value="curl-bash">Block curl piped to shell [Remote Code Exec]</option>
+              </select>
+            </div>
+            <p id="policy-desc" class="param-desc">Policy restricts an agent from generating commits to Git version control.</p>
+          </div>
+
+          <!-- Matching Engine Model -->
+          <div class="control-group">
+            <div class="group-header">
+              <label for="mode-select">CONTROL ENFORCEMENT MODEL</label>
+              <span class="field-meta" id="mode-meta">SUBSTRING</span>
+            </div>
+            <div class="custom-select">
+              <select id="mode-select">
+                <option value="literal" selected>Literal Substring Matcher [Naive / Industry Default]</option>
+                <option value="regex">Regular Expression [Syntax Pattern Engine]</option>
+                <option value="wildcard">Wildcard Glob Pattern [Glob * and ?]</option>
+                <option value="structured">Structured Token Model [Executable + Subcommand Parser]</option>
+              </select>
+            </div>
+            <p id="mode-desc" class="param-desc">Inspects command string for contiguous literal occurrence.</p>
+          </div>
+
+          <!-- Pattern Input -->
+          <div class="control-group">
+            <div class="group-header">
+              <label for="rule-input">GUARDRAIL RULE / PATTERN</label>
+              <span class="field-meta rule-type" id="rule-type-indicator">RAW BYTES</span>
+            </div>
+            <div class="rule-terminal-input">
+              <span class="terminal-prefix">&gt;</span>
+              <input type="text" id="rule-input" value="git commit" spellcheck="false" autocomplete="off">
+            </div>
+            <div id="rule-error" class="rule-diagnostic-err hidden" role="alert"></div>
+          </div>
+
+          <!-- Parameter Presets -->
+          <div class="parameter-presets">
+            <span class="preset-label">TEST PRESETS:</span>
+            <div class="preset-buttons">
+              <button type="button" class="btn-preset active" id="preset-naive">
+                <span class="chip-dot"></span> Naive Substring
+              </button>
+              <button type="button" class="btn-preset" id="preset-regex">
+                <span class="chip-dot"></span> Anchored Regex
+              </button>
+              <button type="button" class="btn-preset" id="preset-hardened">
+                <span class="chip-dot"></span> Structured Token
+              </button>
+            </div>
+          </div>
+
+          <!-- Instrument Action Button -->
+          <div class="instrument-cta">
+            <button type="submit" id="btn-run" class="btn-instrument">
+              <span class="btn-icon">⚡</span>
+              <span id="btn-run-text" class="btn-text">RUN ATTACK SUITE</span>
+              <span class="btn-counter">(14 CASES)</span>
+              <span class="btn-arrow">→</span>
+            </button>
+          </div>
+
+          <!-- Live Diagnostic Progression Ticker (Visualizing Deterministic Stages) -->
+          <div id="diagnostic-ticker" class="diagnostic-ticker hidden">
+            <div class="ticker-header">
+              <span class="ticker-dot"></span>
+              <span class="ticker-title">RUNNING DETERMINISTIC ANALYSIS</span>
+            </div>
+            <div class="ticker-stage" id="ticker-stage-text">01/05 Checking exact syntax representation...</div>
+            <div class="ticker-progress-bar">
+              <div class="ticker-progress-fill" id="ticker-progress-fill"></div>
+            </div>
+          </div>
+        </form>
+
+        <!-- Hardening Log: Before vs After Timeline -->
+        <div class="hardening-timeline" id="hardening-timeline">
+          <div class="timeline-header">
+            <span class="num-bracket">[ 04 ]</span>
+            <h3>HARDENING PROGRESSION // LOG</h3>
+            <button id="btn-clear-history" class="btn-mini">CLEAR</button>
+          </div>
+          <div id="timeline-body" class="timeline-body">
+            <div class="empty-timeline">
+              Run test suite, modify rule to structured or regex, and retest to observe the empirical attack coverage delta.
+            </div>
+          </div>
+        </div>
+
+        <!-- System Architecture Layer Disclaimer -->
+        <div class="boundary-manifesto">
+          <span class="manifesto-title">ARCHITECTURAL BOUNDARY:</span>
+          <p>
+            Command matchers observe text prior to OS execution. They cannot intercept runtime POSIX subshells <code>$(which git)</code>, Git configuration aliases, or pre-commit hook bypasses without lower-layer controls.
+          </p>
+        </div>
+      </section>
+
+      <!-- Right Panel: Test Matrix & Coverage Summary -->
+      <section class="console-panel results-bench">
+        <div class="panel-bar">
+          <div class="panel-heading">
+            <span class="num-bracket">[ 02 ]</span>
+            <h2>ATTACK SUITE EXECUTION MATRIX</h2>
+          </div>
+          <div class="matrix-filter-pills" role="tablist">
+            <button class="pill-tab active" data-filter="all">ALL [14]</button>
+            <button class="pill-tab tab-missed" data-filter="missed">MISSED [<span id="badge-missed">0</span>]</button>
+            <button class="pill-tab tab-blocked" data-filter="blocked">BLOCKED [<span id="badge-blocked">0</span>]</button>
+            <button class="pill-tab tab-na" data-filter="not-applicable">HOOK LAYER [<span id="badge-na">2</span>]</button>
+          </div>
+        </div>
+
+        <!-- Telemetry Summary Block -->
+        <div class="telemetry-block">
+          <div class="telemetry-score-zone">
+            <span class="telemetry-kicker">CORPUS ATTACK COVERAGE</span>
+            <div class="score-display">
+              <span id="score-pct" class="score-pct">0%</span>
+              <div class="score-meta">
+                <span id="score-fraction" class="score-fraction">0 / 12 APPLICABLE</span>
+                <span class="score-label">ADVERSARIAL CASES INTERCEPTED</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="telemetry-verdict-zone">
+            <span class="telemetry-kicker">EVALUATION VERDICT</span>
+            <div id="verdict-banner" class="verdict-tag verdict-pending">READY TO EXECUTE</div>
+            <span class="verdict-disclaimer">Measured against curated 14-case corpus. Not a formal security proof.</span>
+          </div>
+
+          <div class="telemetry-layers-zone">
+            <span class="telemetry-kicker">LAYER ISOLATION READOUT</span>
+            <div class="layer-meters">
+              <div class="meter-row">
+                <span class="layer-code">LAYER A</span>
+                <span class="meter-label">COMMAND MATCHER:</span>
+                <span id="meter-matcher" class="meter-val">0/0</span>
+              </div>
+              <div class="meter-row">
+                <span class="layer-code">LAYER B</span>
+                <span class="meter-label">SHELL INTERPRETATION:</span>
+                <span id="meter-shell" class="meter-val">0/0</span>
+              </div>
+              <div class="meter-row">
+                <span class="layer-code">LAYER C</span>
+                <span class="meter-label">GIT HOOK LAYER:</span>
+                <span id="meter-hook" class="meter-val">2 NON-APPLICABLE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attack Suite Output Terminal / Test Runner -->
+        <div class="test-runner-container">
+          <div class="terminal-table-header">
+            <span class="col-status">STATE</span>
+            <span class="col-id">CASE ID</span>
+            <span class="col-cmd">REPRESENTATION / COMMAND</span>
+            <span class="col-cat">CATEGORY</span>
+            <span class="col-layer">ENFORCEMENT LAYER</span>
+          </div>
+          <div id="test-runner-list" class="test-runner-list">
+            <!-- Dynamically populated rows -->
+          </div>
+        </div>
+
+        <!-- Forensic Evidence Dossier (What Your Guardrail Missed) -->
+        <div id="forensic-dossier" class="forensic-dossier">
+          <div class="dossier-top">
+            <div class="dossier-heading">
+              <span class="num-bracket">[ 03 ]</span>
+              <span class="dossier-kicker">FORENSIC EVIDENCE FILE:</span>
+              <span id="dossier-case-id" class="dossier-id">TC-03</span>
+              <h3 id="dossier-title">Working directory flag before subcommand</h3>
+            </div>
+            <div id="dossier-badge" class="case-verdict-tag missed">MISSED</div>
+          </div>
+
+          <div class="dossier-evidence-block">
+            <span class="dossier-label">ATTACK REPRESENTATION &amp; BREAKING REGION</span>
+            <div class="command-annotated">
+              <pre><code id="dossier-code">git -C /repo commit -m "fix: bug"</code></pre>
+              <div class="token-marker" id="dossier-marker">
+                <span class="marker-pointer">▲</span>
+                <span class="marker-text" id="dossier-pointer-text">Interleaved global flag separates executable from subcommand</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dossier-details-grid">
+            <div class="dossier-detail">
+              <span class="dossier-label">INTENDED OPERATION</span>
+              <p id="dossier-intent" class="dossier-text"></p>
+            </div>
+            <div class="dossier-detail">
+              <span class="dossier-label">ENFORCEMENT LAYER</span>
+              <p id="dossier-layer" class="dossier-text"></p>
+            </div>
+            <div class="dossier-detail">
+              <span class="dossier-label">WHY THIS MATTERS</span>
+              <p id="dossier-matters" class="dossier-text"></p>
+            </div>
+          </div>
+
+          <div class="dossier-finding-box" id="dossier-finding-box">
+            <div class="finding-header">
+              <span class="finding-icon">⌁</span>
+              <span class="finding-title">FORENSIC FAILURE ANALYSIS</span>
+            </div>
+            <p id="dossier-explanation" class="finding-body"></p>
+          </div>
+
+          <div class="dossier-hardening-box">
+            <div class="hardening-header">
+              <span class="hardening-icon">↳</span>
+              <span class="hardening-title">ENGINEERING HARDENING PATH</span>
+            </div>
+            <p id="dossier-hardening" class="hardening-body"></p>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Bottom Technical Documentation / Methodology / Assessment Reflection -->
+    <section class="methodology-section">
+      <div class="methodology-bar">
+        <div class="methodology-tabs">
+          <button class="meth-tab active" data-pane="pane-model">01 / THREAT MODEL &amp; PARADOX</button>
+          <button class="meth-tab" data-pane="pane-taxonomy">02 / LAYER TAXONOMY</button>
+          <button class="meth-tab" data-pane="pane-limits">03 / KNOWN LIMITATIONS</button>
+          <button class="meth-tab" data-pane="pane-ctaio">04 / CTAIO ASSESSMENT REFLECTION</button>
+        </div>
+        <span class="doc-tag">TECHNICAL BRIEFING</span>
+      </div>
+
+      <div class="methodology-content">
+        <!-- Pane 1: Model -->
+        <div id="pane-model" class="meth-pane active">
+          <div class="briefing-grid">
+            <div class="briefing-card">
+              <h4>The Guardrail Paradox: Syntax vs Intent</h4>
+              <p>
+                Developers configure tool execution restrictions on coding agents using naive string filters: <code>git commit</code>, <code>curl | bash</code>, <code>rm -rf</code>.
+              </p>
+              <p>
+                They believe: <em>"The agent cannot commit code."</em><br>
+                The mathematical reality: <em>"The agent cannot emit this specific 10-byte UTF-8 string."</em>
+              </p>
+              <p>
+                Because shell execution environments possess rich parsing semantics (aliases, subshells, path prefixes, interleaved flags, process substitution), a literal string matcher fails against 60%+ of realistic command transformations.
+              </p>
+            </div>
+            <div class="briefing-card">
+              <h4>Why Deterministic &amp; Zero LLMs?</h4>
+              <p>
+                Many AI evaluation products introduce LLM judges to "grade" security. This is an anti-pattern. LLM judges are non-deterministic, slow, vulnerable to token order, and introduce hallucinated security boundaries.
+              </p>
+              <p>
+                Guardrail Lab's core evaluator is 100% deterministic client-side JavaScript. Identical inputs yield bit-for-bit identical verdicts across browsers and operating systems.
+              </p>
+            </div>
+            <div class="briefing-card">
+              <h4>Corpus Coverage Is Not A Security Proof</h4>
+              <p>
+                Scoring 100% on this 14-case corpus means the guardrail successfully intercepted these 14 specific vectors. It does NOT prove security against arbitrary unbounded POSIX shell expansions. Real defense requires tokenized argument validation at the execution boundary and branch protection at the repository platform.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pane 2: Taxonomy -->
+        <div id="pane-taxonomy" class="meth-pane">
+          <div class="taxonomy-table">
+            <div class="tax-row">
+              <span class="tax-layer">LAYER A</span>
+              <span class="tax-name">Command Pattern Matcher</span>
+              <span class="tax-desc">Filters string text before passing to child process. Bypassed via whitespace, flags (-C), and path prefixes (/usr/bin/git).</span>
+              <span class="tax-mitigation">Fix: Parse executable basename and tokenized arguments.</span>
+            </div>
+            <div class="tax-row">
+              <span class="tax-layer">LAYER B</span>
+              <span class="tax-name">Shell Interpretation</span>
+              <span class="tax-desc">POSIX shell expands $(which git), compound chains (&amp;&amp;, ;), and escapes (\git). Matchers anchored with ^ fail.</span>
+              <span class="tax-mitigation">Fix: Restrict shell chaining or inspect each pipeline stage independently.</span>
+            </div>
+            <div class="tax-row">
+              <span class="tax-layer">LAYER C</span>
+              <span class="tax-name">Git Hook Layer</span>
+              <span class="tax-desc">Client pre-commit hooks. Completely bypassed via <code>--no-verify</code> or <code>-n</code>. Irrelevant to command filters.</span>
+              <span class="tax-mitigation">Fix: Enforce server-side branch protections and CI status checks.</span>
+            </div>
+            <div class="tax-row">
+              <span class="tax-layer">LAYER D</span>
+              <span class="tax-name">Repository Workflow</span>
+              <span class="tax-desc">Branch protection, signed commits, and mandatory PR approvals on GitHub/GitLab. The only immune layer.</span>
+              <span class="tax-mitigation">Fix: Platform-level RBAC and branch lockdown.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pane 3: Limitations -->
+        <div id="pane-limits" class="meth-pane">
+          <ul class="limits-checklist">
+            <li><strong>Finite Corpus:</strong> Curated 14 vectors represent high-frequency transformations, but shell grammar allows infinite combinatorial encoding (e.g. <code>eval $(base64 -d ...)</code>).</li>
+            <li><strong>No Live Process Tracing:</strong> Static simulation does not observe eBPF syscalls or dynamic binary renames on disk.</li>
+            <li><strong>No Host Environment State:</strong> Does not query local <code>.gitconfig</code> for active aliases; models the syntactic form of an alias invocation.</li>
+            <li><strong>Harness Focus:</strong> Built specifically to evaluate developer-defined command regexes and token filters.</li>
+          </ul>
+        </div>
+
+        <!-- Pane 4: CTAIO Reflection -->
+        <div id="pane-ctaio" class="meth-pane">
+          <div class="ctaio-reflection-box">
+            <div class="refl-item">
+              <span class="refl-label">WHAT I NOTICED</span>
+              <p>Teams building AI coding agent platforms routinely rely on blocklists of literal strings (<code>git commit</code>, <code>rm -rf</code>, <code>curl | bash</code>). They confuse having written a string rule with having enforced an operational policy.</p>
+            </div>
+            <div class="refl-item">
+              <span class="refl-label">WHAT ASSUMPTION I ATTACKED</span>
+              <p>The assumption that a pattern matcher intercepts an operation. In shell command syntax, the exact same semantic intent takes dozens of equivalent forms. An agent that outputs <code>git -C /repo commit</code> easily bypasses naive filters.</p>
+            </div>
+            <div class="refl-item">
+              <span class="refl-label">WHAT I DELIBERATELY KEPT SMALL</span>
+              <p>Instead of an unmaintainable full POSIX grammar parser or an unpredictable LLM judge, I built a deterministic 14-vector adversarial harness with explicit layer categorization, instant Before/After delta tracking, and 13 unit tests for the tester itself.</p>
+            </div>
+            <div class="refl-item">
+              <span class="refl-label">THE TAKEAWAY</span>
+              <p>Defenses must be tested, not assumed. And defense-in-depth requires structured token enforcement at the agent boundary combined with immutable server-side policies at the repository boundary.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Instrument Footer -->
+    <footer class="console-footer">
+      <div class="footer-segment">
+        <span class="footer-title">GUARDRAIL / LAB</span>
+        <span class="footer-meta">v1.0.0-RELEASE // DETERMINISTIC DEFENSIVE HARNESS</span>
+      </div>
+      <div class="footer-segment text-right">
+        <span class="footer-meta">CTAIO.DEV ENGINEERING ASSESSMENT ARTIFACT // ZERO EXTERNAL DEPENDENCIES</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Engine Invariant Diagnostics Modal -->
+  <div id="modal-self-tests" class="modal-backdrop hidden">
+    <div class="modal-instrument-window">
+      <div class="modal-top-bar">
+        <span class="modal-title">DIAGNOSTIC TEST RUNNER // TEST-THE-TESTER</span>
+        <button id="btn-close-modal" class="btn-modal-close" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-scroll-area">
+        <div class="diagnostic-intro">
+          Verifying that Guardrail Lab's deterministic evaluation engine satisfies all core safety, idempotency, and layer isolation invariants:
+        </div>
+        <div id="modal-test-output" class="modal-test-output">
+          <!-- Populated dynamically via test engine -->
+        </div>
+      </div>
+      <div class="modal-bottom-bar">
+        <span id="modal-test-summary" class="modal-summary-badge">13 / 13 TESTS PASSED</span>
+        <button id="btn-dismiss-modal" class="btn-preset">DISMISS</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ES6 Module Entrypoint -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>

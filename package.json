@@ -1,0 +1,13 @@
+{
+  "name": "guardrail-lab",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Adversarial test harness for AI coding agent guardrails",
+  "scripts": {
+    "test": "node test-engine.js",
+    "start": "npx serve ."
+  },
+  "keywords": ["ai-safety", "agent-guardrails", "evals", "security"],
+  "author": "",
+  "license": "MIT"
+}
