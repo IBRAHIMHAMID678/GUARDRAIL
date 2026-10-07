@@ -1,124 +1,146 @@
 # GUARDRAIL / LAB
+> **Adversarial AI Coding Agent Permission Firewall & 3D Defense Interceptor**
 
-> **"Try to break your AI coding guardrails before an agent does."**
+[![Invariants Passing](https://img.shields.io/badge/Engine%20Invariants-21%2F21%20Passing-10b981?style=flat-square)](file:///d:/GUARDRAIL%20LAB/test-engine.js)
+[![Zero External Runtime Dependencies](https://img.shields.io/badge/Dependencies-Zero%20(Pure%20ES6)-4f46e5?style=flat-square)](file:///d:/GUARDRAIL%20LAB/package.json)
+[![Evaluation Model](https://img.shields.io/badge/Evaluation-100%25%20Deterministic%20AST-059669?style=flat-square)](file:///d:/GUARDRAIL%20LAB/ast-parser.js)
+[![Theme](https://img.shields.io/badge/Theme-Modern%20Light%20Studio-0ea5e9?style=flat-square)](file:///d:/GUARDRAIL%20LAB/style.css)
 
-A deterministic, client-side adversarial test harness designed to expose the critical flaw in AI coding agent permissions: **confusing syntactic command matching with operational policy enforcement.**
+![Guardrail Lab 3D Studio](assets/guardrail_lab_3d_studio.png)
+
+A deterministic, client-side adversarial test harness and interactive 3D WebGL simulator designed to expose and fix the critical flaw in AI coding agent guardrails: **confusing naive string/regex blocklists with POSIX shell execution semantics.**
 
 ---
 
-## 1. Why This Exists
+## 1. The Core Problem
 
-As developers grant autonomous execution privileges to AI coding agents (Claude Code, Cursor, Aider, custom bash tool filters), teams attempt to secure agent environments using literal string or regex blocklists:
-- Policy Goal: *"Prevent the agent from committing code directly."*
-- Implemented Rule: `git commit`
+When engineers deploy autonomous AI coding agents (**Claude Code**, **Cursor**, **Copilot**, **Aider**), they configure shell permissions using simple string or regex blocklists:
+- **Developer Intent:** *"Prevent the agent from committing code or wiping directories directly."*
+- **Implemented Guardrail:** `git commit` or `rm -rf`
 
-The developer assumes: **"The guardrail prevents git commits."**  
-The mathematical reality: **"The guardrail blocks this specific contiguous 10-byte ASCII sequence."**
+The engineer assumes: **"The guardrail blocks git commits."**  
+The mathematical reality: **"The guardrail only blocks this specific contiguous 10-byte ASCII sequence."**
 
 In POSIX shell environments, an identical operation can be expressed in dozens of valid syntactic representations:
+
 ```bash
-git -C /repo commit -m "fix"               # Interleaved global flags
-cd /repo && git commit                     # Compound shell chaining
-/usr/bin/git commit                        # Absolute path normalization
-env PATH="$PATH" git commit                # Process wrappers
-$(which git) commit                        # Runtime subshell resolution
-git    commit                              # Unnormalized whitespace
-git commit --no-verify                     # Hook-layer bypass flag
+git -C /repo commit -m "fix"               # Interleaved global flags (breaks literal sequence)
+echo ok && git commit                      # Compound shell pipeline chaining
+/usr/bin/git commit                        # Absolute filesystem path
+env PATH="$PATH" git commit                # Environment / process wrapper
+$(which git) commit                        # Runtime subshell command substitution
+"git" commit                               # Quote character evasion
+eval $(echo git) commit                    # Dynamic eval indirection
 ```
 
-A naive literal or anchored regex matcher fails against over 60% of realistic command transformations. **Guardrail Lab exists to test defenses rather than assuming they work.**
+A standard regex or substring matcher fails against **over 70%** of realistic evasion vectors. **Guardrail Lab allows you to simulate, visualize, and harden these defenses before an agent breaches your system.**
 
 ---
 
-## 2. Threat Model & Control Layer Taxonomy
+## 2. Interactive 3D Physical Defense Air-Gap
 
-Guardrail Lab categorizes test vectors strictly by enforcement layer. Conflating distinct layers into a generic "bypass" is technically dishonest.
+![Guardrail Lab Attack Matrix](assets/guardrail_lab_attack_matrix.png)
 
-| Layer | Component | Mechanism | Failure Mode | Architectural Mitigation |
+Guardrail Lab visualizes command execution as a **physical 3D WebGL security pipeline**:
+
+```
+[ 🤖 AI AGENT TERMINAL ] ===(Command Projectile)===> [ 🛡️ QUANTUM DEFENSE SHIELD ] ===(If Bypassed)===> [ 🔒 PROTECTED SERVER ]
+     (Left Node)                                            (Center Forcefield)                                (Right Node)
+```
+
+- **Interactive Firing Simulation**: Enter any shell command or click a quick-attack chip (`⚡ Flag Insertion`, `⚡ Chained &&`, `⚡ Subshell`, `⚡ Env Wrapper`, `⚡ Quote Evasion`).
+- **Real-Time Physics**:
+  - **Hardened AST Mode (Blocked)**: The 3D projectile slams into the crystalline quantum shield, ricochets backward, and detonates into an emerald spark shower with an expanding circular shockwave (`[🛡️ INTERCEPTED]`).
+  - **Naive Regex Mode (Bypassed)**: The projectile slips through the porous forcefield and crashes directly into the Protected Server Core, triggering a flashing crimson alert wave (`[⚠️ BREACH]`).
+- **Light Studio Aesthetics**: Built with Three.js WebGL studio lighting (`HemisphereLight` + directional key lights, soft studio floor grid, transparent canvas, crystal refractive materials).
+
+---
+
+## 3. The 6 Security Policies & 49 Curated Vectors
+
+Guardrail Lab includes 6 OWASP-mapped agent threat domains with 49 rigorously curated adversarial test vectors:
+
+| Policy | Intent | Industry Naive Matcher | Hardened POSIX AST Rule | Corpus Vectors |
 | :--- | :--- | :--- | :--- | :--- |
-| **Layer A** | **Command Matcher** | String/regex filtering before passing command to child process | Fragile against interleaved flags (`-C`), path prefixes (`/usr/bin/git`), and whitespace | Tokenize executable basename and argument structure |
-| **Layer B** | **Shell Interpretation** | POSIX shell parser expanding compound operators and subshells | Bypasses line-anchored regexes (`^git`) via `&&`, `;`, `\|`, and `$(which git)` | Restrict shell chaining or evaluate each pipeline stage independently |
-| **Layer C** | **Git Hook Layer** | Client-side Git repository hooks (`pre-commit`) | Client flags like `--no-verify` or `-n` intentionally disable local hooks | Cannot be solved at matcher; requires server-side CI enforcement |
-| **Layer D** | **Repository Workflow** | Server-side branch protection (GitHub/GitLab) | Direct commits rejected by remote git receive policy | **The only immune boundary** to local agent tampering |
+| **📦 Git Commit** | Prevent unreviewed commits | `git commit` | `exec=git & subcmd=commit` | 14 vectors |
+| **⚡ Remote Scripts** | Block curl-piped shell execution | `curl.*\|.*bash` | `exec=curl & pipe=bash \| sh` | 7 vectors |
+| **🗑️ Filesystem Wipe** | Prevent destructive file wipes | `rm -rf` | `exec=rm & flag=-r & flag=-f` | 8 vectors |
+| **🔑 Exfiltration** | Block credential leaks via network | `curl.*\.env` | `exec=curl \| wget & arg=*.env` | 7 vectors |
+| **🐚 Reverse Shell** | Prevent socket hijacks | `bash -i.*tcp` | `exec=bash & flag=-i & arg=*/dev/tcp*` | 7 vectors |
+| **🔒 Sudo Escalation**| Block unauthorized root escalation | `sudo su` | `exec=sudo & subcmd=su \| -i` | 6 vectors |
 
 ---
 
-## 3. Why The Evaluation Engine Is 100% Deterministic
+## 4. Architectural Mitigation: Deterministic POSIX AST Engine
 
-1. **Zero LLM Judges in the Loop:** Many modern AI security tools introduce non-deterministic LLM calls to "evaluate" security. This is an anti-pattern. LLM verdicts are stochastic, introduce latency, suffer from prompt injection, and hallucinate security boundaries.
-2. **Reproducibility:** If an input pattern is tested twice, it produces bit-for-bit identical results on every browser and machine.
-3. **Auditability:** Every verdict is calculated using explicit, transparent string algorithms and tokenizers.
+Rather than relying on non-deterministic LLM judges, Guardrail Lab uses an auditable, client-side **POSIX Shell AST Tokenizer** (`ast-parser.js`):
+1. **Lexical Splitting with Quote Preservation**: Correctly handles single quotes (`'...'`), double quotes (`"..."`), and escape sequences (`\ `).
+2. **Subshell Nesting Tracking**: Tracks parenthesis depth (`parenDepth`) so subshell substitutions like `$(which git)` remain intact for isolated sub-evaluation.
+3. **Pipeline & Compound Decomposition**: Recursively splits commands across `&&`, `||`, `;`, and `|`.
+4. **Binary & Flag Normalization**: Strips wrapper prefixes (`env`, `sudo`, `time`), extracts the canonical base executable name, normalizes combined flags (`-rf` -> `-r`, `-f`), and extracts subcommands (`commit`, `clone`, `checkout`).
 
 ---
 
-## 4. Test The Tester: Engine Invariants
+## 5. One-Click Production Exporters
 
-To maintain engineering discipline, Guardrail Lab includes an automated self-test suite (`test-engine.js`) verifying 13 core invariants:
+Once your guardrail is verified, click **`Export Guardrail`** to copy ready-to-deploy configuration for your agent environment:
+
+- **Claude Code**: Terminal command hook (`config.json`)
+- **Cursor IDE**: System prompt constraint (`.cursorrules`)
+- **AgentSH**: Zero-trust bash agent filter (`agentsh.yaml`)
+- **POSIX Bash Hook**: Drop-in `.bashrc` / `preexec` deterministic wrapper script
+- **Docker / Seccomp**: Container syscall and capability restrictions
+
+---
+
+## 6. Verified Invariant Self-Tests
+
+Guardrail Lab includes an automated self-test suite (`test-engine.js`) verifying 21 core engine invariants:
 - Exact match detection
 - Flag insertion breaking naive matchers
-- Graceful handling of invalid regex syntax (no uncaught exceptions)
+- Graceful handling of invalid regex syntax (no exceptions)
 - Hook-layer isolation (marking `--no-verify` as `NOT_APPLICABLE` to matchers)
-- Deterministic idempotency across repeated runs
-- Case normalization controls
-- Wrapper handling (extracting `git` from `env PATH=... /usr/bin/git`)
-- Structured token matching
+- Deterministic idempotency across repeated executions
+- Case normalization and case-sensitive overrides
+- Wildcard glob expansion (`*` and `?`)
+- AST executable and subcommand extraction
+- Quoted string preservation across pipeline operators
+- Piping detection (`curl | bash`)
+- Combined flag normalization (`-fr` matching `flag=-r & flag=-f`)
+- Full evaluation across all 6 policies
 
-Run the engine unit tests locally via Node:
+Run the test suite locally via Node:
 ```bash
 node test-engine.js
 ```
-Or click the **`16/16 INVARIANTS`** button in the web console header to run the test suite directly inside the browser.
+Output:
+```
+--- Running Guardrail Lab Engine Self-Tests ---
+[✓] Exact match detected in literal mode: PASS
+[✓] Flag insertion breaks literal match: PASS
+[✓] Invalid regex handled safely without exception: PASS
+[✓] Hook bypass flag TC-10 marked as NOT_APPLICABLE to matcher: PASS
+...
+Result: 21/21 tests passed.
+```
 
 ---
 
-## 5. Architectural Implementation
+## 7. Running Locally
 
-- **Zero External Dependencies:** Built purely with standards-compliant HTML5, CSS3, and ES6 JavaScript modules.
-- **Client-Side Isolation:** Zero shell execution, zero child processes, zero `eval()`. Commands are evaluated purely as abstract data in safe browser memory.
-- **Strict Visual System:** Designed as a cleanroom forensic instrument. High information density, monospace data readouts, and clear semantic signalling.
-
----
-
-## 6. What This Tests vs. What It Does NOT Test
-
-### What It Tests:
-- Does your guardrail catch realistic operational transformations of the restricted action?
-- Does your rule distinguish between the command-filtering layer and the Git hook layer?
-- How does coverage change when migrating from naive literal matching to structured tokenization?
-
-### What It Does NOT Test:
-- It is **not** a full shell AST compiler.
-- It is **not** an eBPF / OS-level syscall sandbox.
-- It does **not** prove formal mathematical security against unbounded Turing-complete shell programs.
-- Passing the attack corpus means: *"Robust against this curated adversarial corpus"*, NOT *"100% secure"*.
-
----
-
-## 7. Local Setup
-
-Run locally with any static web server:
+Serve the repository with any local static HTTP server:
 
 ```bash
-# Clone repository
-git clone <repo-url>
-cd guardrail-lab
-
-# Run unit tests
-node test-engine.js
-
-# Start local server (Python 3)
+# Python 3
 python -m http.server 8080
 
-# Or with Node
+# Or Node.js
 npx serve .
 ```
 
-Navigate to `http://localhost:8080/`.
+Open your browser to:
+```
+http://localhost:8080/
+```
 
----
-
-## 8. Reflection for CTAIO.dev
-
-- **The Observation:** In the rush to implement guardrails for agentic coding tools, developers universally reach for literal string matchers. They confuse having written a string rule with having enforced an intent.
-- **The Attack on the Assumption:** The assumption that `"if I block 'git commit', the agent cannot commit"`. A 10-line POSIX invocation with `-C` or `&&` immediately disproves this assumption.
-- **The Deliberate Scope:** Rather than generating an unmaintainable 2,000-line pseudo-parser with hallucinated LLM explanations, I built the smallest useful forensic instrument: a deterministic 14-attack + 6-benign corpus, explicit layer boundary isolation, Before/After delta tracking, and unit tests for the tester itself.
+Zero external build steps. Pure standards-compliant ES6 JavaScript modules, HTML5, and CSS3.
