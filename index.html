@@ -72,6 +72,9 @@
         <button id="btn-share" class="btn-topbar-action secondary" title="Copy shareable link">
           <span class="btn-icon">🔗</span> Share
         </button>
+        <button id="btn-about" class="btn-topbar-action secondary" title="About Guardrail Lab">
+          <span class="btn-icon">ⓘ</span> About
+        </button>
         <button id="btn-theme-toggle" class="btn-topbar-icon" title="Toggle Light / Dark Mode">
           ◐
         </button>
@@ -440,6 +443,99 @@
             <button type="button" id="btn-dismiss-modal" class="btn-topbar-action secondary">
               Close
             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================
+         ABOUT MODAL (What Guardrail Lab is)
+         =================================================================== -->
+    <div id="modal-about" class="modal-backdrop hidden">
+      <div class="modal-dialog modal-about-dialog">
+        <div class="modal-head">
+          <div class="modal-title-wrap">
+            <h3 class="modal-title">🛡️ About Guardrail Lab</h3>
+            <span class="modal-sub">Adversarial AI coding agent permission firewall &amp; 3D defense interceptor</span>
+          </div>
+          <button type="button" id="btn-close-about" class="modal-close-btn">&times;</button>
+        </div>
+
+        <div class="modal-export-body about-body">
+          <div class="about-hero">
+            <p class="about-lede">
+              Guardrail Lab is a <strong>deterministic, client-side adversarial test harness</strong> and
+              interactive 3D WebGL simulator. It exposes the critical flaw in AI coding agent guardrails:
+              <strong>confusing naive string/regex blocklists with POSIX shell execution semantics.</strong>
+            </p>
+          </div>
+
+          <div class="about-section">
+            <span class="about-section-title">The problem it solves</span>
+            <p class="about-text">
+              When engineers deploy autonomous AI coding agents (Claude Code, Cursor, Copilot, Aider),
+              they guard shell permissions with simple blocklists like <code>git commit</code> or
+              <code>rm -rf</code> — and assume the guardrail blocks the <em>operation</em>. In reality it
+              blocks only one specific byte sequence. POSIX shell can express the identical operation
+              dozens of ways:
+            </p>
+            <pre class="about-code"><code>git -C /repo commit -m "fix"      # interleaved flags
+echo ok &amp;&amp; git commit             # chained pipeline
+/usr/bin/git commit               # absolute path
+env git commit                    # env wrapper
+$(which git) commit               # subshell substitution
+"git" commit                      # quote evasion</code></pre>
+            <p class="about-text">
+              A standard regex or substring matcher fails against <strong>over 70%</strong> of realistic
+              evasion vectors. Guardrail Lab lets you simulate, visualize, and harden these defenses
+              <strong>before</strong> an agent breaches your system.
+            </p>
+          </div>
+
+          <div class="about-section">
+            <span class="about-section-title">How it works</span>
+            <ol class="about-steps">
+              <li><strong>Select a threat policy</strong> — 6 OWASP-mapped agent threat domains, 49 curated adversarial vectors.</li>
+              <li><strong>Fire evasion vectors</strong> — type any shell command or hit a quick-attack chip (flag insertion, chained <code>&amp;&amp;</code>, subshell, env wrapper, quote evasion).</li>
+              <li><strong>Compare enforcement</strong> — <em>Naive Substring</em> (porous, bypassed) vs <em>Hardened AST</em> (POSIX syntax-tree tokenization, impervious).</li>
+              <li><strong>Watch the 3D interceptor</strong> — blocked commands shatter against the quantum shield in an emerald burst; bypasses crash into the server core in a crimson breach wave.</li>
+              <li><strong>Export the hardened rule</strong> — one-click deployment configs for Claude Code, Cursor, AgentSH, POSIX bash hooks, and Docker/Seccomp.</li>
+            </ol>
+          </div>
+
+          <div class="about-section">
+            <span class="about-section-title">Threat policies covered</span>
+            <div class="about-chip-row">
+              <span class="about-chip">📦 Git Commit</span>
+              <span class="about-chip">⚡ Remote Scripts</span>
+              <span class="about-chip">🗑️ Filesystem Wipe</span>
+              <span class="about-chip">🔑 Exfiltration</span>
+              <span class="about-chip">🐚 Reverse Shell</span>
+              <span class="about-chip">🔒 Sudo Escalation</span>
+            </div>
+          </div>
+
+          <div class="about-section">
+            <span class="about-section-title">Engine facts</span>
+            <div class="about-stat-grid">
+              <div class="about-stat"><span class="about-stat-num">21/21</span><span class="about-stat-label">engine invariants passing</span></div>
+              <div class="about-stat"><span class="about-stat-num">49</span><span class="about-stat-label">curated attack vectors</span></div>
+              <div class="about-stat"><span class="about-stat-num">6</span><span class="about-stat-label">threat policies</span></div>
+              <div class="about-stat"><span class="about-stat-num">0</span><span class="about-stat-label">external runtime deps</span></div>
+            </div>
+            <p class="about-text about-fine">
+              No LLM judges in the critical path — evaluation is 100% deterministic AST tokenization
+              (quote preservation, subshell depth tracking, pipeline decomposition, flag normalization).
+              The entire lab runs <strong>client-side in your browser</strong>: no backend, no accounts,
+              nothing you type ever leaves this page. Pure ES6 modules — serve the folder statically and go.
+            </p>
+          </div>
+
+          <div class="about-footer">
+            <a class="about-link" href="https://github.com/IBRAHIMHAMID678/GUARDRAIL" target="_blank" rel="noopener">
+              <span>View source on GitHub</span><span aria-hidden="true">↗</span>
+            </a>
+            <span class="about-version">GUARDRAIL LAB · v1.0.0 · MIT</span>
           </div>
         </div>
       </div>

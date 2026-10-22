@@ -43,6 +43,7 @@ const elements = {
   btnExport: document.getElementById('btn-export'),
   btnShare: document.getElementById('btn-share'),
   btnSelfTests: document.getElementById('btn-self-tests'),
+  btnAbout: document.getElementById('btn-about'),
   btnThemeToggle: document.getElementById('btn-theme-toggle'),
 
   // Policy Switcher Pills
@@ -146,6 +147,10 @@ const elements = {
   btnDismissModal: document.getElementById('btn-dismiss-modal'),
   modalTestOutput: document.getElementById('modal-test-output'),
   modalTestSummary: document.getElementById('modal-test-summary'),
+
+  // About Modal
+  modalAbout: document.getElementById('modal-about'),
+  btnCloseAbout: document.getElementById('btn-close-about'),
 
   // Toast
   toastNotify: document.getElementById('toast-notify')
@@ -313,6 +318,17 @@ function bindEvents() {
   elements.btnSelfTests.addEventListener('click', openSelfTestsModal);
   elements.btnCloseModal.addEventListener('click', closeSelfTestsModal);
   elements.btnDismissModal.addEventListener('click', closeSelfTestsModal);
+
+  elements.btnAbout.addEventListener('click', openAboutModal);
+  elements.btnCloseAbout.addEventListener('click', closeAboutModal);
+  elements.modalAbout.addEventListener('click', (e) => {
+    if (e.target === elements.modalAbout) closeAboutModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !elements.modalAbout.classList.contains('hidden')) {
+      closeAboutModal();
+    }
+  });
 
   // Theme Toggle
   elements.btnThemeToggle.addEventListener('click', toggleTheme);
@@ -980,6 +996,17 @@ function openSelfTestsModal() {
 
 function closeSelfTestsModal() {
   elements.modalSelfTests.classList.add('hidden');
+}
+
+/**
+ * About Modal
+ */
+function openAboutModal() {
+  elements.modalAbout.classList.remove('hidden');
+}
+
+function closeAboutModal() {
+  elements.modalAbout.classList.add('hidden');
 }
 
 /**
