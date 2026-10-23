@@ -2,12 +2,30 @@
   "name": "guardrail-lab",
   "version": "1.0.0",
   "type": "module",
-  "description": "Adversarial test harness for AI coding agent guardrails",
+  "description": "Adversarial AI coding agent permission firewall test bench & 3D WebGL defense interceptor",
+  "homepage": "https://github.com/IBRAHIMHAMID678/GUARDRAIL",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IBRAHIMHAMID678/GUARDRAIL.git"
+  },
   "scripts": {
     "test": "node test-engine.js",
     "start": "npx serve ."
   },
-  "keywords": ["ai-safety", "agent-guardrails", "evals", "security"],
-  "author": "",
+  "keywords": [
+    "ai-safety",
+    "agent-guardrails",
+    "posix",
+    "claude-code",
+    "cursor",
+    "security",
+    "red-teaming",
+    "evals",
+    "evaluation",
+    "ast-parser",
+    "threejs",
+    "firewall"
+  ],
+  "author": "Ibrahim Hamid",
   "license": "MIT"
 }
