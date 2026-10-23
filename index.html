@@ -3,54 +3,165 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guardrail Lab — AI Agent Security &amp; 3D Defense Interceptor</title>
-  <meta name="description" content="Test and harden AI coding agent guardrails against real-world shell AST bypasses. Interactive 3D WebGL physical defense pipeline and POSIX tokenizer.">
+  <title>Guardrail Lab — Agent Permission Firewall Test Bench</title>
+  <meta name="description" content="Test how AI coding agent permission rules hold up against real POSIX command syntax. Fire a command at a naive matcher and a deterministic AST engine, side by side.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <!-- Three.js for 3D Quantum Defensive Interceptor -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
-<body class="light-theme">
-  <div class="app-shell">
+<body class="light-studio-body">
 
-    <!-- ===================================================================
-         TOP NAVIGATION BAR
-         =================================================================== -->
-    <header class="app-topbar">
-      <div class="topbar-brand">
-        <div class="brand-shield-icon">🛡️</div>
+  <!-- =====================================================================
+       TOP WINDOW BAR (Dark Sleek Frame)
+       ===================================================================== -->
+  <header class="window-topbar">
+    <div class="window-title-wrap">
+      <span class="window-title">Guardrail Lab — Agent Permission Firewall Test Bench</span>
+      <span class="window-chevron">▾</span>
+    </div>
+    <div class="window-actions">
+      <!-- Search / Command Palette Box -->
+      <div class="window-search-pill" title="Quick Command Palette (Ctrl+K)">
+        <span class="search-icon">⌕</span>
+      </div>
+      <!-- Export Button -->
+      <button type="button" id="btn-export-top" class="window-export-btn" title="Export hardened rule to Claude Code or Cursor">
+        <svg class="export-icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Export</span>
+      </button>
+      <!-- Sound FX Toggle -->
+      <button type="button" id="btn-sound-toggle" class="window-icon-btn" title="Toggle Procedural Web Audio FX">
+        <span class="audio-icon">🔊</span>
+        <span id="audio-state-text" class="audio-label">FX: ON</span>
+      </button>
+      <!-- Fullscreen / Window Icons -->
+      <button type="button" class="window-icon-btn" title="Expand View" id="btn-expand-view">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <polyline points="9 21 3 21 3 15"></polyline>
+          <line x1="21" y1="3" x2="14" y2="10"></line>
+          <line x1="3" y1="21" x2="10" y2="14"></line>
+        </svg>
+      </button>
+      <button type="button" id="btn-about" class="window-icon-btn" title="About Guardrail Lab">
+        <span>ⓘ</span>
+        <span>About</span>
+      </button>
+      <button type="button" id="btn-share" class="window-icon-btn" title="Copy shareable permalink">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       MAIN PAGE CONTAINER
+       ===================================================================== -->
+  <div class="page-container">
+
+    <!-- Inner Brand Header -->
+    <header class="app-inner-header">
+      <div class="brand-left">
+        <div class="brand-shield-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+          </svg>
+        </div>
         <div class="brand-text">
-          <h1 class="brand-title">GUARDRAIL LAB</h1>
-          <span class="brand-tagline">AI AGENT PERMISSION FIREWALL</span>
+          <span class="brand-bold">Guardrail</span>
+          <span class="brand-light">Lab</span>
         </div>
       </div>
+      <div class="header-right">
+        <button type="button" id="btn-self-tests-pill" class="invariants-passing-pill" title="View deterministic self-tests">
+          21 / 21 invariants passing
+        </button>
+        <!-- Hidden button to keep original btn-self-tests binding -->
+        <button type="button" id="btn-self-tests" class="hidden">21 Invariants</button>
+        <button type="button" id="btn-export" class="hidden">Export</button>
+        <button type="button" id="btn-theme-toggle" class="hidden">Theme</button>
+      </div>
+    </header>
 
-      <!-- Quick Category Picker -->
-      <div class="policy-selector-strip">
-        <span class="policy-strip-label">THREAT POLICY:</span>
-        <div class="policy-pills-bar">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <h1 class="hero-title">
+        Your blocklist blocks a <span class="highlight-coral">string.</span><br>
+        Your agent runs a <span class="highlight-coral">shell.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Test how AI coding agent permission rules hold up against real POSIX command syntax. Fire a command at a naive matcher and a deterministic AST engine, side by side.
+      </p>
+    </section>
+
+    <!-- 2x2 Stat Cards Grid -->
+    <section class="stat-cards-grid">
+      <!-- Card 1: Attack vectors -->
+      <div class="stat-card">
+        <span class="stat-label">Attack vectors</span>
+        <span class="stat-value" id="kpi-attack-vectors">32</span>
+      </div>
+      <!-- Card 2: Policies -->
+      <div class="stat-card">
+        <span class="stat-label">Policies</span>
+        <span class="stat-value" id="kpi-policies-count">6</span>
+      </div>
+      <!-- Card 3: Naive matcher catches -->
+      <div class="stat-card">
+        <span class="stat-label">Naive matcher catches</span>
+        <span class="stat-value highlight-coral" id="kpi-naive-catches">47%</span>
+      </div>
+      <!-- Card 4: AST engine catches -->
+      <div class="stat-card">
+        <span class="stat-label">AST engine catches</span>
+        <span class="stat-value highlight-emerald" id="kpi-ast-catches">100%</span>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         MAIN DEFENSE WORKBENCH (Double-Bezel Card Container)
+         =================================================================== -->
+    <main class="workbench-card-container" id="workbench">
+
+      <!-- Policy Switcher Tabs Bar -->
+      <div class="policy-tabs-bar">
+        <div class="policy-tabs-list" role="tablist">
           <button type="button" class="policy-pill-btn active" data-policy="git-commit">
-            <span class="pill-icon">📦</span> Block Git Commits
+            <span class="policy-pill-name">Git commit</span>
+            <span class="policy-pill-count">8 vectors</span>
           </button>
           <button type="button" class="policy-pill-btn" data-policy="curl-bash">
-            <span class="pill-icon">⚡</span> Remote Scripts
+            <span class="policy-pill-name">Remote scripts</span>
+            <span class="policy-pill-count">5 vectors</span>
           </button>
           <button type="button" class="policy-pill-btn" data-policy="rm-rf">
-            <span class="pill-icon">🗑️</span> File Deletion
+            <span class="policy-pill-name">Filesystem wipes</span>
+            <span class="policy-pill-count">6 vectors</span>
           </button>
           <button type="button" class="policy-pill-btn" data-policy="secret-exfil">
-            <span class="pill-icon">🔑</span> Exfiltration
+            <span class="policy-pill-name">Exfiltration</span>
+            <span class="policy-pill-count">5 vectors</span>
           </button>
           <button type="button" class="policy-pill-btn" data-policy="reverse-shell">
-            <span class="pill-icon">🐚</span> Reverse Shell
+            <span class="policy-pill-name">Reverse shell</span>
+            <span class="policy-pill-count">4 vectors</span>
           </button>
           <button type="button" class="policy-pill-btn" data-policy="privilege-esc">
-            <span class="pill-icon">🔒</span> Sudo Esc
+            <span class="policy-pill-name">Privilege escalation</span>
+            <span class="policy-pill-count">4 vectors</span>
           </button>
         </div>
-        <!-- Hidden select to preserve form bindings -->
+
+        <!-- Hidden inputs to preserve app.js state and form triggers -->
         <select id="policy-select" class="hidden">
           <option value="git-commit" selected>Block git commit</option>
           <option value="curl-bash">Block curl piped to shell</option>
@@ -59,285 +170,245 @@
           <option value="reverse-shell">Block Reverse Shell &amp; Socket Hijack</option>
           <option value="privilege-esc">Block Sudo &amp; Privilege Escalation</option>
         </select>
+        <span id="spec-corpus-count" class="hidden">49 VECTORS IN CORPUS</span>
+        <span id="crumb-policy-name" class="hidden">Block Git Commits</span>
+        <span id="kpi-active-policy" class="hidden">Block Git Commits</span>
+        <span id="policy-desc" class="hidden">Prevent an agent from committing changes to git version control</span>
+        <span id="policy-category-tag" class="hidden">SCM INTEGRITY</span>
       </div>
 
-      <!-- Header Action Controls -->
-      <div class="topbar-actions">
-        <button id="btn-export" class="btn-topbar-action primary" title="Export hardened rule to Claude Code or Cursor">
-          <span class="btn-icon">⎘</span> Export Guardrail
-        </button>
-        <button id="btn-self-tests" class="btn-topbar-action secondary" title="View 21 verified unit tests">
-          <span class="btn-icon">✓</span> 21 Tests Passing
-        </button>
-        <button id="btn-share" class="btn-topbar-action secondary" title="Copy shareable link">
-          <span class="btn-icon">🔗</span> Share
-        </button>
-        <button id="btn-about" class="btn-topbar-action secondary" title="About Guardrail Lab">
-          <span class="btn-icon">ⓘ</span> About
-        </button>
-        <button id="btn-theme-toggle" class="btn-topbar-icon" title="Toggle Light / Dark Mode">
-          ◐
-        </button>
-      </div>
-    </header>
+      <!-- ===============================================================
+           SIDE-BY-SIDE FIREWALL COMPARISON & ENGINE SELECTOR
+           =============================================================== -->
+      <section class="side-by-side-section">
+        <div class="side-by-side-grid">
 
-    <!-- ===================================================================
-         MAIN WORKBENCH
-         =================================================================== -->
-    <main class="app-main">
-
-      <!-- 3-Step Engineer Guided Walkthrough Strip -->
-      <section class="walkthrough-bar">
-        <div class="walkthrough-step">
-          <div class="step-badge">1</div>
-          <div class="step-details">
-            <span class="step-title">Select Threat Policy</span>
-            <span class="step-caption" id="policy-desc">Prevent an agent from committing changes to git version control</span>
-          </div>
-        </div>
-        <div class="walkthrough-arrow">→</div>
-        <div class="walkthrough-step">
-          <div class="step-badge">2</div>
-          <div class="step-details">
-            <span class="step-title">Test Evasion Vector</span>
-            <span class="step-caption">Try real-world flag insertions, subshells &amp; quote bypasses</span>
-          </div>
-        </div>
-        <div class="walkthrough-arrow">→</div>
-        <div class="walkthrough-step">
-          <div class="step-badge">3</div>
-          <div class="step-details">
-            <span class="step-title">Watch 3D Defense &amp; Export</span>
-            <span class="step-caption">Compare Naive Regex vs POSIX AST and deploy to Claude/Cursor</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================================================================
-           STUDIO ARENA: Live Simulator (Left) + 3D Pipeline (Right)
-           =================================================================== -->
-      <div class="studio-stage-grid">
-
-        <!-- LEFT COLUMN: AI Command Terminal & Defense Switcher -->
-        <div class="studio-card">
-          <div class="card-header-clean">
-            <div class="card-title-group">
-              <span class="card-tag-badge">COMMAND WORKBENCH</span>
-              <span class="card-title-text">AI Agent Command Firewall</span>
-            </div>
-            <span id="control-status" class="status-indicator ready">READY</span>
-          </div>
-
-          <div class="workbench-body">
-
-            <!-- AI Command Terminal Input -->
-            <div class="terminal-block">
-              <div class="terminal-label-row">
-                <label for="sandbox-cmd-input" class="field-label">AI AGENT COMMAND TO EXECUTE</label>
-                <span class="field-hint">Press Enter to simulate</span>
+          <!-- Left Engine: Naive Matcher -->
+          <div class="engine-card naive-engine active" id="preset-naive">
+            <div class="engine-card-top">
+              <div class="engine-info">
+                <span class="engine-badge vulnerable">POROUS</span>
+                <h3 class="engine-title">Naive Matcher</h3>
               </div>
-              <div class="terminal-input-wrap">
-                <span class="terminal-prompt">$</span>
-                <input type="text" id="sandbox-cmd-input" class="terminal-input" value="git -C /repo commit -m 'bypass'" spellcheck="false" autocomplete="off" placeholder="Enter shell command...">
-              </div>
+              <span class="engine-stat-pill coral" id="naive-catch-stat">47% CATCH</span>
             </div>
-
-            <!-- Quick Evasion Attack Chips -->
-            <div class="quick-chips-group">
-              <span class="chips-label">QUICK ATTACK EVASION VECTORS:</span>
-              <div class="chips-row">
-                <button type="button" class="quick-atk-chip" data-cmd="git -C /repo commit -m 'flag_bypass'">
-                  ⚡ Flag Insertion
-                </button>
-                <button type="button" class="quick-atk-chip" data-cmd="echo ok &amp;&amp; git commit -m 'chained'">
-                  ⚡ Chained &amp;&amp;
-                </button>
-                <button type="button" class="quick-atk-chip" data-cmd="$(which git) commit -m 'subshell'">
-                  ⚡ Subshell $(cmd)
-                </button>
-                <button type="button" class="quick-atk-chip" data-cmd="env git commit -m 'env_bypass'">
-                  ⚡ Env Wrapper
-                </button>
-                <button type="button" class="quick-atk-chip" data-cmd="&quot;git&quot; commit -m 'quotes'">
-                  ⚡ Quote Evasion
-                </button>
-              </div>
-            </div>
-
-            <!-- Defense Mode Selector (Clear Comparison) -->
-            <div class="defense-switch-group">
-              <span class="field-label">GUARDRAIL ENFORCEMENT MECHANISM:</span>
-              <div class="defense-options-grid">
-                <div class="defense-option-card active naive" id="preset-naive">
-                  <div class="defense-opt-header">
-                    <span class="defense-opt-title">Naive Substring</span>
-                    <span class="defense-opt-badge vulnerable">POROUS</span>
-                  </div>
-                  <span class="defense-opt-desc">Matches raw bytes ("git commit"). Bypassed by flags &amp; subshells.</span>
-                </div>
-                <div class="defense-option-card" id="preset-hardened">
-                  <div class="defense-opt-header">
-                    <span class="defense-opt-title">Hardened AST</span>
-                    <span class="defense-opt-badge impervious">IMPERVIOUS</span>
-                  </div>
-                  <span class="defense-opt-desc">POSIX syntax tree tokenization. Intercepts all flags, aliases &amp; subshells.</span>
-                </div>
-              </div>
-
-              <!-- Hidden elements to preserve app.js event model -->
-              <div class="hidden">
-                <button type="button" id="preset-regex">Regex</button>
-                <select id="mode-select">
-                  <option value="literal" selected>Literal Substring</option>
-                  <option value="regex">Regular Expression</option>
-                  <option value="wildcard">Wildcard Glob</option>
-                  <option value="structured">Structured AST</option>
-                </select>
-                <span id="mode-meta">SUBSTRING</span>
-                <span id="mode-desc">Description</span>
-                <input type="text" id="rule-input" value="git commit">
-                <span id="rule-type-indicator">RAW BYTES</span>
-                <div id="rule-error"></div>
-              </div>
-            </div>
-
-            <!-- Primary Action Buttons -->
-            <div class="action-buttons-wrap">
-              <button type="button" id="btn-sandbox-fire" class="btn-primary-fire">
-                <span>▶</span>
-                <span>SIMULATE COMMAND IN 3D INTERCEPTOR</span>
-              </button>
-              
-              <button type="button" id="btn-run" class="btn-suite-run">
-                <span class="btn-run-icon">⚡</span>
-                <span id="btn-run-text">Run Full Attack Suite</span>
-                <span id="btn-run-count">(14 Attacks)</span>
-              </button>
-            </div>
-
-            <!-- Instant Forensic Feedback Banner -->
-            <div id="sandbox-feedback" class="sandbox-feedback-banner bypassed">
-              <span><strong>⚠️ BYPASSED</strong> — Naive regex failed: "-C /repo" separated "git" from "commit".</span>
-              <span class="verdict-badge missed">MISSED</span>
-            </div>
-
-            <!-- Diagnostic Progress Ticker -->
-            <div id="diagnostic-ticker" class="diagnostic-ticker hidden">
-              <div class="ticker-header">
-                <span class="ticker-dot-pulse"></span>
-                <span class="ticker-text">SIMULATING ADVERSARIAL ATTACKS...</span>
-              </div>
-              <div class="ticker-bar-track">
-                <div id="ticker-progress-fill" class="ticker-bar-fill"></div>
-              </div>
-              <span id="ticker-stage-text" class="ticker-sub">01/04 Tokenizing POSIX shell syntax...</span>
-            </div>
-
-            <!-- Magic One-Click Harden Callout -->
-            <div id="harden-callout" class="hidden">
-              <button type="button" id="btn-auto-harden" class="btn-auto-harden">
-                🛡️ Auto-Harden Guardrail (1-Click)
-              </button>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- RIGHT COLUMN: 3D Interceptor Theater & Telemetry Bay -->
-        <div class="studio-card theater-card">
-          <div class="theater-topbar">
-            <!-- Pipeline Flow Status Indicator -->
-            <div class="theater-pipeline-status">
-              <span class="pipeline-node agent">🤖 AI AGENT</span>
-              <span class="pipeline-arrow">---></span>
-              <span class="pipeline-node shield">🛡️ DEFENSE SHIELD</span>
-              <span class="pipeline-arrow">---></span>
-              <span class="pipeline-node server">🔒 PROTECTED HOST</span>
-            </div>
-
-            <div class="theater-view-controls">
-              <!-- Camera Presets -->
-              <div class="camera-dock" id="camera-controls">
-                <button type="button" class="cam-btn" data-cam="iso">Isometric</button>
-                <button type="button" class="cam-btn" data-cam="top">Top</button>
-                <button type="button" class="cam-btn" data-cam="front">Front</button>
-                <button type="button" class="cam-btn" data-cam="core">Server Core</button>
-              </div>
-
-              <!-- View switch tabs -->
-              <div class="hidden">
-                <button type="button" id="tab-view-3d" class="active">3D</button>
-                <button type="button" id="tab-view-ast">AST</button>
-              </div>
+            <p class="engine-desc">
+              Matches raw contiguous byte sequences (e.g. <code>"git commit"</code>). Instantly bypassed by interleaved flags (<code>-C</code>), shell chaining (<code>&amp;&amp;</code>), wrappers, and subshells.
+            </p>
+            <div class="engine-footer">
+              <span class="engine-mode-tag">LITERAL SUBSTRING / REGEX</span>
             </div>
           </div>
 
-          <!-- 3D Canvas Viewport -->
-          <div id="interceptor-canvas-container" class="interceptor-canvas-container">
-            <div id="interceptor-canvas" class="interceptor-canvas"></div>
-            <div class="canvas-hint-overlay">
-              DRAG TO ORBIT // WATCH PROJECTILE DEFLECTION BURST
-            </div>
-          </div>
-
-          <!-- Alternative AST Tree Viewport (Preserved) -->
-          <div id="ast-visualizer-pane" class="ast-visualizer-pane hidden">
-            <div class="ast-pane-header">
-              <span id="ast-target-cmd">git commit</span>
-            </div>
-            <div id="ast-nodes-container" class="ast-nodes-container"></div>
-          </div>
-
-          <!-- Telemetry & Defense Scorecard Dock -->
-          <div class="telemetry-dock">
-            <div class="telemetry-dial-box">
-              <div id="score-dial-wrap" class="dial-circle-wrap vulnerable">
-                <span id="score-pct" class="dial-number">14%</span>
-                <span class="dial-unit">COVERAGE</span>
+          <!-- Right Engine: Deterministic AST Engine -->
+          <div class="engine-card hardened-engine" id="preset-hardened">
+            <div class="engine-card-top">
+              <div class="engine-info">
+                <span class="engine-badge impervious">IMPERVIOUS</span>
+                <h3 class="engine-title">Deterministic AST Engine</h3>
               </div>
-              <div class="dial-meta">
-                <span id="verdict-banner" class="verdict-status-tag vulnerable">VULNERABLE</span>
-                <span id="score-fraction" class="dial-fraction">2 / 14 BLOCKED</span>
-              </div>
+              <span class="engine-stat-pill emerald" id="ast-catch-stat">100% CATCH</span>
             </div>
-
-            <div class="telemetry-advice-box">
-              <span class="advice-title">GUARDRAIL STATUS:</span>
-              <span id="telemetry-advice-text" class="advice-text">
-                Naive substring is vulnerable to 12 bypasses. Switch to Hardened AST to achieve 100% impervious containment.
-              </span>
-            </div>
-
-            <div class="telemetry-harden-btn-wrap">
-              <button type="button" id="btn-quick-harden" class="btn-auto-harden">
+            <p class="engine-desc">
+              Tokenizes real POSIX execution syntax trees in-memory. Normalizes binary paths, decomposes pipelines, and inspects command subtrees regardless of flags or syntax evasion.
+            </p>
+            <div class="engine-footer">
+              <span class="engine-mode-tag">POSIX SYNTAX TREE PARSER</span>
+              <button type="button" id="btn-quick-harden" class="btn-auto-harden-pill">
                 🛡️ Auto-Harden (1-Click)
               </button>
             </div>
+          </div>
 
-            <!-- Hidden elements for layer metrics to maintain app.js updates -->
-            <div class="hidden">
-              <span id="meter-matcher">0/0</span>
-              <span id="meter-shell">0/0</span>
-              <span id="meter-hook">0/0</span>
-              <span id="spec-corpus-count">49 VECTORS</span>
-              <span id="policy-category-tag">SECURITY CONTROL</span>
+        </div>
+
+        <!-- Hidden elements for app.js state -->
+        <div class="hidden">
+          <button type="button" id="preset-regex">Regex</button>
+          <select id="mode-select">
+            <option value="literal" selected>Literal Substring</option>
+            <option value="regex">Regular Expression</option>
+            <option value="wildcard">Wildcard Glob</option>
+            <option value="structured">Structured AST</option>
+          </select>
+          <span id="mode-meta">SUBSTRING</span>
+          <span id="mode-desc">Description</span>
+          <input type="text" id="rule-input" value="git commit">
+          <span id="rule-type-indicator">RAW BYTES</span>
+          <div id="rule-error"></div>
+          <span id="control-status" class="status-indicator ready">READY</span>
+          <span id="kpi-active-mode">Naive Substring</span>
+          <div id="score-dial-wrap"></div>
+          <div id="score-progress-fill"></div>
+          <span id="score-pct">14%</span>
+          <span id="score-fraction">2 / 14 BLOCKED</span>
+          <span id="verdict-banner" class="verdict-status-tag vulnerable">VULNERABLE</span>
+          <span id="badge-all-nav">14</span>
+          <span id="meter-matcher">0/0</span>
+          <span id="meter-shell">0/0</span>
+          <span id="meter-hook">0/0</span>
+          <span id="telemetry-advice-text"></span>
+          <div id="harden-callout">
+            <button type="button" id="btn-auto-harden">Auto-Harden</button>
+          </div>
+          <div id="timeline-body"></div>
+          <button type="button" id="btn-clear-history">Clear History</button>
+        </div>
+      </section>
+
+      <!-- ===============================================================
+           COMMAND PAYLOAD SANDBOX & SIMULATOR
+           =============================================================== -->
+      <section class="command-sandbox-section">
+        
+        <div class="sandbox-input-shell">
+          <div class="sandbox-input-header">
+            <span class="sandbox-label">TEST COMMAND PAYLOAD</span>
+            <span class="sandbox-hint">Type any POSIX command or select an exploit scenario below</span>
+          </div>
+
+          <div class="sandbox-input-box">
+            <span class="terminal-dollar">$</span>
+            <input type="text" id="sandbox-cmd-input" class="sandbox-input-field" value="git -C /repo commit -m 'bypass'" spellcheck="false" autocomplete="off" placeholder="Enter POSIX shell command...">
+            <button type="button" id="btn-sandbox-fire" class="btn-fire-sim">
+              <span>▶ Simulate in 3D</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Exploit Scenarios -->
+        <div class="quick-scenarios-box">
+          <span class="scenarios-title">REAL-WORLD AGENT EXPLOIT SCENARIOS:</span>
+          <div class="scenarios-chips-list">
+            <button type="button" class="quick-atk-chip" data-cmd="git -C /repo commit -m 'flag_bypass'">
+              ⚡ Flag Interleaving (-C)
+            </button>
+            <button type="button" class="quick-atk-chip" data-cmd="echo ok &amp;&amp; git commit -m 'chained'">
+              ⚡ Chained (&amp;&amp;)
+            </button>
+            <button type="button" class="quick-atk-chip" data-cmd="$(which git) commit -m 'subshell'">
+              ⚡ Claude Subshell $(cmd)
+            </button>
+            <button type="button" class="quick-atk-chip" data-cmd="env git commit -m 'env_bypass'">
+              ⚡ Process Wrapper (env)
+            </button>
+            <button type="button" class="quick-atk-chip" data-cmd="&quot;git&quot; commit -m 'quotes'">
+              ⚡ Quote Evasion
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="sandbox-actions-row">
+          <div class="actions-left">
+            <button type="button" id="btn-run" class="btn-run-suite">
+              <span class="btn-icon">⚡</span>
+              <span id="btn-run-text">Run Full Attack Suite</span>
+              <span id="btn-run-count" class="count-tag">(14 Attacks)</span>
+            </button>
+            <button type="button" id="btn-unleash-agent" class="btn-unleash-duel">
+              <span class="duel-icon">⚔️</span>
+              <span class="duel-text">Unleash Rogue Agent Duel</span>
+            </button>
+          </div>
+          <div class="agent-active-badge-wrap">
+            <span class="agent-status-dot pulse"></span>
+            <span id="agent-active-target" class="agent-active-target">TARGET: SCM MUTATION</span>
+          </div>
+        </div>
+
+        <!-- Instant Forensic Feedback Banner -->
+        <div id="sandbox-feedback" class="sandbox-feedback-banner bypassed">
+          <span><strong>⚠️ BYPASSED</strong> — Naive regex failed: "-C /repo" separated "git" from "commit".</span>
+          <span class="verdict-badge missed">MISSED</span>
+        </div>
+
+        <!-- Diagnostic Progress Ticker -->
+        <div id="diagnostic-ticker" class="diagnostic-ticker hidden">
+          <div class="ticker-header">
+            <span class="ticker-dot-pulse"></span>
+            <span class="ticker-text">SIMULATING ADVERSARIAL ATTACKS...</span>
+          </div>
+          <div class="ticker-bar-track">
+            <div id="ticker-progress-fill" class="ticker-bar-fill"></div>
+          </div>
+          <span id="ticker-stage-text" class="ticker-sub">01/04 Tokenizing POSIX shell syntax...</span>
+        </div>
+
+        <!-- Red-Team Streaming Console (Collapsible / Active) -->
+        <div class="redteam-console-box">
+          <div class="redteam-console-header">
+            <span class="console-title">AUTONOMOUS RED-TEAM ADVERSARY STREAM</span>
+            <span class="console-sub">Deterministic evasion engine</span>
+          </div>
+          <div class="redteam-terminal-body" id="redteam-terminal-stream">
+            <div class="terminal-line system">[INIT] Autonomous Red-Team Agent initialized.</div>
+            <div class="terminal-line intel">[INTEL] Target Defense Layer: POSIX Shell Command Filter</div>
+            <div class="terminal-line prompt">[READY] Click "Unleash Rogue Agent Duel" to start automated assault...</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ===============================================================
+           3D DEFENSE INTERCEPTOR THEATER & AST TREE
+           ============================================================== -->
+      <section class="theater-section">
+        <div class="theater-header">
+          <div class="theater-pipeline-flow">
+            <span class="pipe-node agent">🤖 AI AGENT</span>
+            <span class="pipe-arrow">───▶</span>
+            <span class="pipe-node shield">🛡️ DEFENSE SHIELD</span>
+            <span class="pipe-arrow">───▶</span>
+            <span class="pipe-node server">🔒 PROTECTED SERVER</span>
+          </div>
+
+          <div class="theater-view-controls">
+            <!-- Camera Presets -->
+            <div class="camera-dock" id="camera-controls">
+              <button type="button" class="cam-btn active" data-cam="iso">Isometric</button>
+              <button type="button" class="cam-btn" data-cam="top">Top</button>
+              <button type="button" class="cam-btn" data-cam="front">Front</button>
+              <button type="button" class="cam-btn" data-cam="core">Core</button>
+            </div>
+            <!-- View Tabs -->
+            <div class="view-switch-tabs">
+              <button type="button" id="tab-view-3d" class="view-tab-btn active">3D View</button>
+              <button type="button" id="tab-view-ast" class="view-tab-btn">AST Tree</button>
             </div>
           </div>
         </div>
 
-      </div>
+        <!-- 3D Canvas Viewport -->
+        <div id="interceptor-canvas-container" class="canvas-viewport-wrap">
+          <div id="interceptor-canvas" class="canvas-stage"></div>
+          <div class="canvas-watermark-hint">
+            DRAG TO ORBIT // OBSERVE REAL-TIME SHIELD DEFLECTION &amp; BREACH
+          </div>
+        </div>
 
-      <!-- ===================================================================
-           THREAT COVERAGE MATRIX (14 Vectors)
-           =================================================================== -->
-      <section class="matrix-section">
-        <div class="matrix-header">
-          <div class="matrix-title-wrap">
-            <h3 class="matrix-title">Adversarial Evasion Attack Vectors</h3>
+        <!-- AST Visualizer Pane -->
+        <div id="ast-visualizer-pane" class="ast-visualizer-pane hidden">
+          <div class="ast-pane-header">
+            <span class="ast-label">AST PARSE TARGET:</span>
+            <code id="ast-target-cmd" class="threat-code">git commit</code>
+          </div>
+          <div id="ast-nodes-container" class="ast-nodes-container"></div>
+        </div>
+      </section>
+
+      <!-- ===============================================================
+           ADVERSARIAL ATTACK MATRIX & FORENSIC EVIDENCE DOSSIER
+           =============================================================== -->
+      <section class="waf-matrix-section" id="waf-stream">
+        <div class="waf-section-header">
+          <div class="waf-title-wrap">
+            <span class="waf-eyebrow">REAL-TIME VERIFICATION</span>
+            <h2 class="waf-title">Adversarial Evasion Attack Matrix</h2>
           </div>
 
-          <!-- Filter Pills -->
-          <div class="matrix-filter-pills">
+          <!-- Filter Pills with Live Badges -->
+          <div class="waf-filter-tabs">
             <button type="button" class="filter-tab-pill active" data-filter="all">
               <span>All Attacks</span>
               <span id="badge-all" class="filter-badge">14</span>
@@ -351,205 +422,240 @@
               <span id="badge-blocked" class="filter-badge">2</span>
             </button>
             <button type="button" class="filter-tab-pill" data-filter="not-applicable">
-              <span>N/A</span>
+              <span>Hook Boundary</span>
               <span id="badge-na" class="filter-badge">0</span>
             </button>
           </div>
         </div>
 
-        <!-- Threat Cards Table -->
-        <div id="test-runner-list" class="threat-cards-container">
-          <!-- Populated dynamically by app.js renderRunnerList() -->
+        <div class="waf-split-grid">
+          <!-- Threat Table -->
+          <div class="waf-table-panel">
+            <div class="threat-table-header">
+              <span class="col-id">ID</span>
+              <span class="col-cat">CATEGORY</span>
+              <span class="col-cmd">ADVERSARIAL SHELL COMMAND</span>
+              <span class="col-status">VERDICT</span>
+              <span class="col-action">ACTION</span>
+            </div>
+            <div id="test-runner-list" class="threat-cards-list">
+              <!-- Dynamically populated by app.js -->
+            </div>
+          </div>
+
+          <!-- Forensic Evidence Dossier -->
+          <div class="waf-dossier-panel">
+            <div class="dossier-card">
+              <div class="dossier-head">
+                <div class="dossier-badge-row">
+                  <span id="dossier-case-id" class="dossier-id-tag">TC-03</span>
+                  <span id="dossier-badge" class="verdict-badge missed">BYPASSED</span>
+                </div>
+                <h4 id="dossier-title" class="dossier-title">Working directory flag before subcommand</h4>
+              </div>
+
+              <div class="dossier-body">
+                <div class="dossier-code-box">
+                  <code id="dossier-code" class="threat-code">git -C /repo commit -m "fix"</code>
+                </div>
+
+                <div id="dossier-marker" class="dossier-marker-box">
+                  <span class="marker-icon">🔍</span>
+                  <span id="dossier-pointer-text" class="marker-text">
+                    Interleaved "-C /repo" breaks contiguous "git commit" matching.
+                  </span>
+                </div>
+
+                <div class="dossier-meta-grid">
+                  <div class="meta-field">
+                    <span class="meta-label">ATTACK INTENT</span>
+                    <span id="dossier-intent" class="meta-val">Change repo directory prior to commit</span>
+                  </div>
+                  <div class="meta-field">
+                    <span class="meta-label">ENFORCEMENT LAYER</span>
+                    <span id="dossier-layer" class="meta-val">MATCHER LAYER</span>
+                  </div>
+                </div>
+
+                <div class="dossier-section">
+                  <span class="section-label">WHY THIS BYPASSES REGEX &amp; SUBSTRING</span>
+                  <p id="dossier-matters" class="section-text">
+                    Global Git flags placed before the subcommand break literal ASCII sequences while remaining 100% valid POSIX shell execution.
+                  </p>
+                </div>
+
+                <div class="dossier-section">
+                  <span class="section-label">EVALUATOR VERDICT REASON</span>
+                  <p id="dossier-explanation" class="section-text text-danger">
+                    Failed: Substring "git commit" was not contiguous.
+                  </p>
+                </div>
+
+                <div class="dossier-section">
+                  <span class="section-label">HOW TO HARDEN DEFENSE</span>
+                  <p id="dossier-hardening" class="section-text text-success">
+                    Use POSIX AST structured matching: tokenize executable basename and inspect argument list.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- ===================================================================
-           FORENSIC DOSSIER & METHODOLOGY (Hidden / Preserved bindings)
-           =================================================================== -->
-      <div class="hidden">
-        <span id="dossier-case-id">TC-03</span>
-        <span id="dossier-title">Interleaved Flag Attack</span>
-        <span id="dossier-badge">MISSED</span>
-        <span id="dossier-code">git -C /repo commit</span>
-        <span id="dossier-marker"></span>
-        <span id="dossier-pointer-text"></span>
-        <span id="dossier-intent"></span>
-        <span id="dossier-layer"></span>
-        <span id="dossier-matters"></span>
-        <span id="dossier-explanation"></span>
-        <span id="dossier-hardening"></span>
-        <div id="timeline-body"></div>
-        <button id="btn-clear-history">Clear</button>
-        <button class="meth-tab">Tab</button>
-        <div class="meth-pane">Pane</div>
-      </div>
-
     </main>
 
-    <!-- ===================================================================
-         EXPORTERS MODAL (Claude Code, Cursor, Bash, Docker)
-         =================================================================== -->
-    <div id="modal-exports" class="modal-backdrop hidden">
-      <div class="modal-dialog">
-        <div class="modal-head">
-          <div class="modal-title-wrap">
-            <h3 class="modal-title">Export Hardened Guardrail Rule</h3>
-            <span class="modal-sub">Deploy deterministic enforcement to your AI coding agent</span>
-          </div>
-          <button type="button" id="btn-close-export-modal" class="modal-close-btn">&times;</button>
+  </div>
+
+  <!-- =====================================================================
+       MODALS: Policy Exporter & Invariant Self-Tests
+       ===================================================================== -->
+
+  <!-- Modal: Exporter -->
+  <div id="modal-exports" class="modal-backdrop hidden">
+    <div class="modal-dialog">
+      <div class="modal-head">
+        <div class="modal-title-wrap">
+          <h3 class="modal-title">Export Hardened AI Agent Permissions</h3>
+          <span class="modal-sub">Deploy verified firewall rules into production agent tools</span>
         </div>
-
-        <div class="modal-export-tabs">
-          <button type="button" class="export-nav-tab active" data-target="claudeCode">Claude Code</button>
-          <button type="button" class="export-nav-tab" data-target="cursor">Cursor Rules</button>
-          <button type="button" class="export-nav-tab" data-target="agentsh">AgentSH</button>
-          <button type="button" class="export-nav-tab" data-target="bash">POSIX Bash Hook</button>
-          <button type="button" class="export-nav-tab" data-target="seccomp">Docker / Seccomp</button>
-        </div>
-
-        <div class="modal-export-body">
-          <p id="export-target-desc" class="field-hint">Configuration for Claude Code terminal permissions.</p>
-          <pre class="export-code-block"><code id="export-code-text">// Loading export...</code></pre>
-
-          <div class="export-actions-row">
-            <button type="button" id="btn-copy-export" class="btn-topbar-action primary">
-              <span>📋</span> Copy to Clipboard
-            </button>
-            <button type="button" id="btn-download-export" class="btn-topbar-action secondary">
-              <span>⬇</span> Download File
-            </button>
-          </div>
+        <button type="button" id="btn-close-export-modal" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-export-tabs">
+        <button type="button" class="export-nav-tab active" data-target="claudeCode">Claude Code</button>
+        <button type="button" class="export-nav-tab" data-target="cursorRules">Cursor (.cursorrules)</button>
+        <button type="button" class="export-nav-tab" data-target="agentsh">agentsh (Syscall)</button>
+        <button type="button" class="export-nav-tab" data-target="shellWrapper">Bash Wrapper</button>
+        <button type="button" class="export-nav-tab" data-target="seccomp">Docker / Seccomp</button>
+      </div>
+      <div class="modal-export-body">
+        <span id="export-target-desc" class="export-desc">Claude Code pre-tool execution denial policy</span>
+        <pre class="export-code-block"><code id="export-code-text">// Loading configuration...</code></pre>
+        <div class="export-actions-row">
+          <button type="button" id="btn-download-export" class="cf-btn-secondary">Download Config</button>
+          <button type="button" id="btn-copy-export" class="cf-btn-primary">Copy to Clipboard</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- ===================================================================
-         SELF-TESTS MODAL (21 Invariants)
-         =================================================================== -->
-    <div id="modal-self-tests" class="modal-backdrop hidden">
-      <div class="modal-dialog">
-        <div class="modal-head">
-          <div class="modal-title-wrap">
-            <h3 class="modal-title">Deterministic Engine Invariants</h3>
-            <span class="modal-sub">Verified test assertions for AST tokenizer and matcher</span>
-          </div>
-          <button type="button" id="btn-close-modal" class="modal-close-btn">&times;</button>
+  <!-- Modal: 21 Invariants Verification -->
+  <div id="modal-self-tests" class="modal-backdrop hidden">
+    <div class="modal-dialog">
+      <div class="modal-head">
+        <div class="modal-title-wrap">
+          <h3 class="modal-title">Engine Self-Test Invariants Verification</h3>
+          <span class="modal-sub">Deterministic AST and rule evaluation test suite</span>
         </div>
-
-        <div class="modal-export-body">
-          <pre class="export-code-block"><code id="modal-test-output">// Running invariants...</code></pre>
-          <div class="export-actions-row">
-            <span id="modal-test-summary" class="status-indicator ready">21 / 21 PASSING</span>
-            <button type="button" id="btn-dismiss-modal" class="btn-topbar-action secondary">
-              Close
-            </button>
-          </div>
+        <button type="button" id="btn-close-modal" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-export-body">
+        <span id="modal-test-summary" class="export-desc">Running 21 deterministic engine unit tests...</span>
+        <pre class="export-code-block"><code id="modal-test-output">// Running tests...</code></pre>
+        <div class="export-actions-row">
+          <button type="button" id="btn-dismiss-modal" class="cf-btn-secondary">Close Verification</button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- ===================================================================
-         ABOUT MODAL (What Guardrail Lab is)
-         =================================================================== -->
-    <div id="modal-about" class="modal-backdrop hidden">
-      <div class="modal-dialog modal-about-dialog">
-        <div class="modal-head">
-          <div class="modal-title-wrap">
-            <h3 class="modal-title">🛡️ About Guardrail Lab</h3>
-            <span class="modal-sub">Adversarial AI coding agent permission firewall &amp; 3D defense interceptor</span>
-          </div>
-          <button type="button" id="btn-close-about" class="modal-close-btn">&times;</button>
+  <!-- Modal: About Guardrail Lab -->
+  <div id="modal-about" class="modal-backdrop hidden">
+    <div class="modal-dialog modal-about-dialog">
+      <div class="modal-head">
+        <div class="modal-title-wrap">
+          <h3 class="modal-title">🛡️ About Guardrail Lab</h3>
+          <span class="modal-sub">Adversarial AI coding agent permission firewall &amp; 3D defense interceptor</span>
+        </div>
+        <button type="button" id="btn-close-about" class="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-export-body about-body">
+        <div class="about-hero">
+          <p class="about-lede">
+            Guardrail Lab is a <strong>deterministic, client-side adversarial test harness</strong> and
+            interactive 3D WebGL simulator. It exposes the critical flaw in AI coding agent guardrails:
+            <strong>confusing naive string/regex blocklists with POSIX shell execution semantics.</strong>
+          </p>
         </div>
 
-        <div class="modal-export-body about-body">
-          <div class="about-hero">
-            <p class="about-lede">
-              Guardrail Lab is a <strong>deterministic, client-side adversarial test harness</strong> and
-              interactive 3D WebGL simulator. It exposes the critical flaw in AI coding agent guardrails:
-              <strong>confusing naive string/regex blocklists with POSIX shell execution semantics.</strong>
-            </p>
-          </div>
-
-          <div class="about-section">
-            <span class="about-section-title">The problem it solves</span>
-            <p class="about-text">
-              When engineers deploy autonomous AI coding agents (Claude Code, Cursor, Copilot, Aider),
-              they guard shell permissions with simple blocklists like <code>git commit</code> or
-              <code>rm -rf</code> — and assume the guardrail blocks the <em>operation</em>. In reality it
-              blocks only one specific byte sequence. POSIX shell can express the identical operation
-              dozens of ways:
-            </p>
-            <pre class="about-code"><code>git -C /repo commit -m "fix"      # interleaved flags
+        <div class="about-section">
+          <span class="about-section-title">The problem it solves</span>
+          <p class="about-text">
+            When engineers deploy autonomous AI coding agents (Claude Code, Cursor, Copilot, Aider),
+            they guard shell permissions with simple blocklists like <code>git commit</code> or
+            <code>rm -rf</code> — and assume the guardrail blocks the <em>operation</em>. In reality it
+            blocks only one specific byte sequence. POSIX shell can express the identical operation
+            dozens of ways:
+          </p>
+          <pre class="about-code"><code>git -C /repo commit -m "fix"      # interleaved flags
 echo ok &amp;&amp; git commit             # chained pipeline
 /usr/bin/git commit               # absolute path
 env git commit                    # env wrapper
 $(which git) commit               # subshell substitution
 "git" commit                      # quote evasion</code></pre>
-            <p class="about-text">
-              A standard regex or substring matcher fails against <strong>over 70%</strong> of realistic
-              evasion vectors. Guardrail Lab lets you simulate, visualize, and harden these defenses
-              <strong>before</strong> an agent breaches your system.
-            </p>
-          </div>
+          <p class="about-text">
+            A standard regex or substring matcher fails against <strong>over 70%</strong> of realistic
+            evasion vectors. Guardrail Lab lets you simulate, visualize, and harden these defenses
+            <strong>before</strong> an agent breaches your system.
+          </p>
+        </div>
 
-          <div class="about-section">
-            <span class="about-section-title">How it works</span>
-            <ol class="about-steps">
-              <li><strong>Select a threat policy</strong> — 6 OWASP-mapped agent threat domains, 49 curated adversarial vectors.</li>
-              <li><strong>Fire evasion vectors</strong> — type any shell command or hit a quick-attack chip (flag insertion, chained <code>&amp;&amp;</code>, subshell, env wrapper, quote evasion).</li>
-              <li><strong>Compare enforcement</strong> — <em>Naive Substring</em> (porous, bypassed) vs <em>Hardened AST</em> (POSIX syntax-tree tokenization, impervious).</li>
-              <li><strong>Watch the 3D interceptor</strong> — blocked commands shatter against the quantum shield in an emerald burst; bypasses crash into the server core in a crimson breach wave.</li>
-              <li><strong>Export the hardened rule</strong> — one-click deployment configs for Claude Code, Cursor, AgentSH, POSIX bash hooks, and Docker/Seccomp.</li>
-            </ol>
-          </div>
+        <div class="about-section">
+          <span class="about-section-title">How it works</span>
+          <ol class="about-steps">
+            <li><strong>Select a threat policy</strong> — 6 OWASP-mapped agent threat domains, 49 curated adversarial vectors.</li>
+            <li><strong>Fire evasion vectors</strong> — type any shell command or hit a quick-attack chip (flag insertion, chained <code>&amp;&amp;</code>, subshell, env wrapper, quote evasion).</li>
+            <li><strong>Compare enforcement</strong> — <em>Naive Substring</em> (porous, bypassed) vs <em>Hardened AST</em> (POSIX syntax-tree tokenization, impervious).</li>
+            <li><strong>Watch the 3D interceptor</strong> — blocked commands shatter against the quantum shield in an emerald burst; bypasses crash into the server core in a crimson breach wave.</li>
+            <li><strong>Export the hardened rule</strong> — one-click deployment configs for Claude Code, Cursor, AgentSH, POSIX bash hooks, and Docker/Seccomp.</li>
+          </ol>
+        </div>
 
-          <div class="about-section">
-            <span class="about-section-title">Threat policies covered</span>
-            <div class="about-chip-row">
-              <span class="about-chip">📦 Git Commit</span>
-              <span class="about-chip">⚡ Remote Scripts</span>
-              <span class="about-chip">🗑️ Filesystem Wipe</span>
-              <span class="about-chip">🔑 Exfiltration</span>
-              <span class="about-chip">🐚 Reverse Shell</span>
-              <span class="about-chip">🔒 Sudo Escalation</span>
-            </div>
+        <div class="about-section">
+          <span class="about-section-title">Threat policies covered</span>
+          <div class="about-chip-row">
+            <span class="about-chip">📦 Git Commit</span>
+            <span class="about-chip">⚡ Remote Scripts</span>
+            <span class="about-chip">🗑️ Filesystem Wipe</span>
+            <span class="about-chip">🔑 Exfiltration</span>
+            <span class="about-chip">🐚 Reverse Shell</span>
+            <span class="about-chip">🔒 Sudo Escalation</span>
           </div>
+        </div>
 
-          <div class="about-section">
-            <span class="about-section-title">Engine facts</span>
-            <div class="about-stat-grid">
-              <div class="about-stat"><span class="about-stat-num">21/21</span><span class="about-stat-label">engine invariants passing</span></div>
-              <div class="about-stat"><span class="about-stat-num">49</span><span class="about-stat-label">curated attack vectors</span></div>
-              <div class="about-stat"><span class="about-stat-num">6</span><span class="about-stat-label">threat policies</span></div>
-              <div class="about-stat"><span class="about-stat-num">0</span><span class="about-stat-label">external runtime deps</span></div>
-            </div>
-            <p class="about-text about-fine">
-              No LLM judges in the critical path — evaluation is 100% deterministic AST tokenization
-              (quote preservation, subshell depth tracking, pipeline decomposition, flag normalization).
-              The entire lab runs <strong>client-side in your browser</strong>: no backend, no accounts,
-              nothing you type ever leaves this page. Pure ES6 modules — serve the folder statically and go.
-            </p>
+        <div class="about-section">
+          <span class="about-section-title">Engine facts</span>
+          <div class="about-stat-grid">
+            <div class="about-stat"><span class="about-stat-num">21/21</span><span class="about-stat-label">engine invariants passing</span></div>
+            <div class="about-stat"><span class="about-stat-num">49</span><span class="about-stat-label">curated attack vectors</span></div>
+            <div class="about-stat"><span class="about-stat-num">6</span><span class="about-stat-label">threat policies</span></div>
+            <div class="about-stat"><span class="about-stat-num">0</span><span class="about-stat-label">external runtime deps</span></div>
           </div>
+          <p class="about-text about-fine">
+            No LLM judges in the critical path — evaluation is 100% deterministic AST tokenization
+            (quote preservation, subshell depth tracking, pipeline decomposition, flag normalization).
+            The entire lab runs <strong>client-side in your browser</strong>: no backend, no accounts,
+            nothing you type ever leaves this page. Pure ES6 modules — serve the folder statically and go.
+          </p>
+        </div>
 
-          <div class="about-footer">
-            <a class="about-link" href="https://github.com/IBRAHIMHAMID678/GUARDRAIL" target="_blank" rel="noopener">
-              <span>View source on GitHub</span><span aria-hidden="true">↗</span>
-            </a>
-            <span class="about-version">GUARDRAIL LAB · v1.0.0 · MIT</span>
-          </div>
+        <div class="about-footer">
+          <a class="about-link" href="https://github.com/IBRAHIMHAMID678/GUARDRAIL" target="_blank" rel="noopener">
+            <span>View source on GitHub</span><span aria-hidden="true">↗</span>
+          </a>
+          <span class="about-version">GUARDRAIL LAB · v1.0.0 · MIT</span>
         </div>
       </div>
     </div>
-
-    <!-- Toast Notification -->
-    <div id="toast-notify" class="toast-card hidden">
-      <span class="toast-icon">✓</span>
-      <span id="toast-text" class="toast-msg">Notification</span>
-    </div>
-
   </div>
 
-  <!-- Application Bootstrap -->
+  <!-- Floating Toast Notification -->
+  <div id="toast-notify" class="toast-card hidden">
+    <span class="toast-icon">✓</span>
+    <span id="toast-text" class="toast-msg">Operation completed.</span>
+  </div>
+
   <script type="module" src="app.js"></script>
 </body>
 </html>

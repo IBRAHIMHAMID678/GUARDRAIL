@@ -19,6 +19,7 @@ import { parseShellCommand } from './ast-parser.js';
 import { runAllTests } from './test-engine.js';
 import { QuantumInterceptor3D } from './interceptor-3d.js';
 import { generateExports } from './exporters.js';
+import { audioFx } from './audio-fx.js';
 
 // Application State
 const state = {
@@ -43,8 +44,12 @@ const elements = {
   btnExport: document.getElementById('btn-export'),
   btnShare: document.getElementById('btn-share'),
   btnSelfTests: document.getElementById('btn-self-tests'),
-  btnAbout: document.getElementById('btn-about'),
   btnThemeToggle: document.getElementById('btn-theme-toggle'),
+  btnSoundToggle: document.getElementById('btn-sound-toggle'),
+  audioStateText: document.getElementById('audio-state-text'),
+  btnUnleashAgent: document.getElementById('btn-unleash-agent'),
+  redteamTerminalStream: document.getElementById('redteam-terminal-stream'),
+  agentActiveTarget: document.getElementById('agent-active-target'),
 
   // Policy Switcher Pills
   policyPills: document.querySelectorAll('.policy-pill-btn'),
@@ -150,6 +155,7 @@ const elements = {
 
   // About Modal
   modalAbout: document.getElementById('modal-about'),
+  btnAbout: document.getElementById('btn-about'),
   btnCloseAbout: document.getElementById('btn-close-about'),
 
   // Toast
@@ -294,12 +300,31 @@ function bindEvents() {
     tab.addEventListener('click', () => setFilter(tab.dataset.filter));
   });
 
+  // Procedural Sound FX Toggle
+  if (elements.btnSoundToggle) {
+    const isMuted = audioFx.isMuted();
+    elements.btnSoundToggle.classList.toggle('muted', isMuted);
+    if (elements.audioStateText) elements.audioStateText.textContent = isMuted ? 'FX: MUTED' : 'FX: ON';
+
+    elements.btnSoundToggle.addEventListener('click', () => {
+      const muted = audioFx.toggleMute();
+      elements.btnSoundToggle.classList.toggle('muted', muted);
+      if (elements.audioStateText) elements.audioStateText.textContent = muted ? 'FX: MUTED' : 'FX: ON';
+      showToast(muted ? '🔇 Procedural Audio Muted' : '🔊 Procedural Audio Enabled');
+    });
+  }
+
+  // Unleash Red-Team Agent Duel
+  if (elements.btnUnleashAgent) {
+    elements.btnUnleashAgent.addEventListener('click', unleashRedTeamDuel);
+  }
+
   // Clear Timeline
-  elements.btnClearHistory.addEventListener('click', clearHistory);
+  if (elements.btnClearHistory) elements.btnClearHistory.addEventListener('click', clearHistory);
 
   // Exporters Modal
-  elements.btnExport.addEventListener('click', openExportModal);
-  elements.btnCloseExportModal.addEventListener('click', closeExportModal);
+  if (elements.btnExport) elements.btnExport.addEventListener('click', openExportModal);
+  if (elements.btnCloseExportModal) elements.btnCloseExportModal.addEventListener('click', closeExportModal);
   elements.exportNavTabs.forEach(tab => {
     tab.addEventListener('click', () => {
       elements.exportNavTabs.forEach(t => t.classList.remove('active'));
@@ -308,30 +333,35 @@ function bindEvents() {
       renderExportCode();
     });
   });
-  elements.btnCopyExport.addEventListener('click', copyExportCode);
-  elements.btnDownloadExport.addEventListener('click', downloadExportCode);
+  if (elements.btnCopyExport) elements.btnCopyExport.addEventListener('click', copyExportCode);
+  if (elements.btnDownloadExport) elements.btnDownloadExport.addEventListener('click', downloadExportCode);
 
   // Share Permalink
-  elements.btnShare.addEventListener('click', copyPermalink);
+  if (elements.btnShare) elements.btnShare.addEventListener('click', copyPermalink);
 
   // Invariant Self-Test Modal
-  elements.btnSelfTests.addEventListener('click', openSelfTestsModal);
-  elements.btnCloseModal.addEventListener('click', closeSelfTestsModal);
-  elements.btnDismissModal.addEventListener('click', closeSelfTestsModal);
-
-  elements.btnAbout.addEventListener('click', openAboutModal);
-  elements.btnCloseAbout.addEventListener('click', closeAboutModal);
-  elements.modalAbout.addEventListener('click', (e) => {
-    if (e.target === elements.modalAbout) closeAboutModal();
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !elements.modalAbout.classList.contains('hidden')) {
-      closeAboutModal();
-    }
-  });
+  if (elements.btnSelfTests) elements.btnSelfTests.addEventListener('click', openSelfTestsModal);
+  if (elements.btnCloseModal) elements.btnCloseModal.addEventListener('click', closeSelfTestsModal);
+  if (elements.btnDismissModal) elements.btnDismissModal.addEventListener('click', closeSelfTestsModal);
 
   // Theme Toggle
-  elements.btnThemeToggle.addEventListener('click', toggleTheme);
+  if (elements.btnThemeToggle) elements.btnThemeToggle.addEventListener('click', toggleTheme);
+
+  // About Modal
+  if (elements.btnAbout) elements.btnAbout.addEventListener('click', openAboutModal);
+  if (elements.btnCloseAbout) elements.btnCloseAbout.addEventListener('click', closeAboutModal);
+
+  // Topbar and Header Action Triggers
+  const btnExportTop = document.getElementById('btn-export-top');
+  if (btnExportTop) btnExportTop.addEventListener('click', openExportModal);
+  const btnSelfTestsPill = document.getElementById('btn-self-tests-pill');
+  if (btnSelfTestsPill) btnSelfTestsPill.addEventListener('click', openSelfTestsModal);
+
+  // Sidebar Nav Action Triggers
+  const btnExportNav = document.getElementById('btn-export-nav');
+  if (btnExportNav) btnExportNav.addEventListener('click', openExportModal);
+  const btnSelfTestsNav = document.getElementById('btn-self-tests-nav');
+  if (btnSelfTestsNav) btnSelfTestsNav.addEventListener('click', openSelfTestsModal);
 }
 
 /**
@@ -362,6 +392,16 @@ function loadPolicy(policyId) {
   if (elements.policyCategoryTag) {
     elements.policyCategoryTag.textContent = policy.category ? policy.category.toUpperCase() : 'SECURITY CONTROL';
   }
+
+  if (elements.agentActiveTarget) {
+    elements.agentActiveTarget.textContent = `TARGET: ${(policy.shortName || policy.id).toUpperCase()}`;
+  }
+
+  // Update Cloudflare Breadcrumb & KPI Card
+  const crumbPolicyName = document.getElementById('crumb-policy-name');
+  if (crumbPolicyName) crumbPolicyName.textContent = policy.title || policy.name || policy.id;
+  const kpiActivePolicy = document.getElementById('kpi-active-policy');
+  if (kpiActivePolicy) kpiActivePolicy.textContent = policy.title || policy.name || policy.id;
 
   elements.modeSelect.value = policy.defaultMode;
   elements.ruleInput.value = policy.defaultRule;
@@ -398,6 +438,12 @@ function setMode(mode) {
 
   if (interceptor3d) {
     interceptor3d.setShieldMode(mode === 'structured' ? 'hardened' : 'porous');
+  }
+
+  // Update Cloudflare Active Mode KPI
+  const kpiActiveMode = document.getElementById('kpi-active-mode');
+  if (kpiActiveMode) {
+    kpiActiveMode.textContent = mode === 'structured' ? 'Hardened POSIX AST' : (mode === 'regex' ? 'Regular Expression' : 'Naive Substring');
   }
 
   validateRuleLive();
@@ -454,9 +500,9 @@ function applyPreset(presetType) {
 }
 
 function updatePresetButtons(activeMode) {
-  elements.presetNaive.classList.toggle('active', activeMode === 'literal');
-  elements.presetRegex.classList.toggle('active', activeMode === 'regex');
-  elements.presetHardened.classList.toggle('active', activeMode === 'structured');
+  if (elements.presetNaive) elements.presetNaive.classList.toggle('active', activeMode === 'literal' || activeMode === 'regex');
+  if (elements.presetRegex) elements.presetRegex.classList.toggle('active', activeMode === 'regex');
+  if (elements.presetHardened) elements.presetHardened.classList.toggle('active', activeMode === 'structured');
 }
 
 /**
@@ -576,6 +622,15 @@ function renderResults(suiteResult) {
   if (scoreDialWrap) {
     scoreDialWrap.className = `dial-circle-wrap ${suiteResult.coveragePercent === 100 ? 'secure' : 'vulnerable'}`;
   }
+
+  // Update Cloudflare KPI Progress Fill & Nav Badge
+  const scoreProgressFill = document.getElementById('score-progress-fill');
+  if (scoreProgressFill) {
+    scoreProgressFill.style.width = `${suiteResult.coveragePercent}%`;
+    scoreProgressFill.className = `cf-kpi-progress-fill ${suiteResult.coveragePercent === 100 ? 'secure' : 'vulnerable'}`;
+  }
+  const badgeAllNav = document.getElementById('badge-all-nav');
+  if (badgeAllNav) badgeAllNav.textContent = suiteResult.totalCases;
 
   // Layer Meters
   const layerMatcherBlocked = suiteResult.results.filter(r => r.targetLayer === 'matcher' && r.status === 'BLOCKED').length;
@@ -813,15 +868,136 @@ function fireLiveSandboxVector() {
     renderAstTreeView(customCmd);
   }
 
+  audioFx.playLaser();
+
   if (interceptor3d) {
     interceptor3d.fireProjectile({
       status,
       command: customCmd,
       targetLayer: 'matcher'
+    }, (tc) => {
+      if (tc.status === 'BLOCKED') {
+        audioFx.playDeflect();
+      } else {
+        audioFx.playBreach();
+      }
     });
   }
 
   showToast(`Fired "${customCmd}" into 3D Interceptor: ${status}`);
+}
+
+/**
+ * Appends a formatted line to the Red-Team Streaming Console
+ */
+function appendRedTeamLog(type, text) {
+  if (!elements.redteamTerminalStream) return;
+  const line = document.createElement('div');
+  line.className = `terminal-line ${type}`;
+  line.textContent = text;
+  elements.redteamTerminalStream.appendChild(line);
+  elements.redteamTerminalStream.scrollTop = elements.redteamTerminalStream.scrollHeight;
+  audioFx.playClick();
+}
+
+/**
+ * Autonomous Red-Team Agent Duel:
+ * Sequentially fires an escalating barrage of real-world syntactic bypass vectors
+ * at the quantum defense shield, with live terminal thoughts and audio FX.
+ */
+function unleashRedTeamDuel() {
+  if (state.isExecuting) return;
+  state.isExecuting = true;
+
+  const policy = POLICIES[state.policyId] || POLICIES['git-commit'];
+  const duelBtn = elements.btnUnleashAgent;
+  if (duelBtn) {
+    duelBtn.disabled = true;
+    duelBtn.style.opacity = '0.6';
+    const textSpan = duelBtn.querySelector('.duel-text');
+    if (textSpan) textSpan.textContent = '⚔️ ASSAULT IN PROGRESS...';
+  }
+
+  appendRedTeamLog('system', `[DUEL INITIATED] Red-Team autonomous assault targeting: "${policy.shortName}".`);
+  appendRedTeamLog('intel', `[INTEL] Active Firewall Mode: ${state.mode.toUpperCase()} (Pattern: "${state.rule}")`);
+
+  const corpus = policy.corpus || [];
+  const candidates = [];
+  const categoriesSeen = new Set();
+
+  for (const tc of corpus) {
+    if (tc.applicableToMatcher && !categoriesSeen.has(tc.category)) {
+      candidates.push(tc);
+      categoriesSeen.add(tc.category);
+      if (candidates.length >= 5) break;
+    }
+  }
+  if (candidates.length < 5) {
+    for (const tc of corpus) {
+      if (tc.applicableToMatcher && !candidates.includes(tc)) {
+        candidates.push(tc);
+        if (candidates.length >= 5) break;
+      }
+    }
+  }
+
+  let idx = 0;
+  let blockedCount = 0;
+
+  function runNextStage() {
+    if (idx >= candidates.length) {
+      state.isExecuting = false;
+      if (duelBtn) {
+        duelBtn.disabled = false;
+        duelBtn.style.opacity = '1';
+        const textSpan = duelBtn.querySelector('.duel-text');
+        if (textSpan) textSpan.textContent = 'UNLEASH RED-TEAM AGENT DUEL';
+      }
+      const allBlocked = blockedCount === candidates.length;
+      if (allBlocked) {
+        appendRedTeamLog('prompt', `[COMPLETE] 🛡️ Shield held: ${blockedCount}/${candidates.length} vectors contained! Hardened AST is IMPERVIOUS.`);
+      } else {
+        appendRedTeamLog('breached', `[COMPLETE] ⚠️ VULNERABLE: ${candidates.length - blockedCount}/${candidates.length} vectors breached the firewall! Switch to Hardened AST.`);
+      }
+      return;
+    }
+
+    const tc = candidates[idx];
+    idx++;
+
+    appendRedTeamLog('intel', `[STAGE ${idx}/5: ${tc.category.toUpperCase()}] Synthesizing payload...`);
+    appendRedTeamLog('evasion', `$ ${tc.command}`);
+
+    if (elements.sandboxCmdInput) {
+      elements.sandboxCmdInput.value = tc.command;
+    }
+
+    const matchOutcome = evaluateMatcher(tc.command, state.rule, state.mode);
+    const isBlocked = matchOutcome.matched;
+    if (isBlocked) blockedCount++;
+
+    audioFx.playLaser();
+
+    if (interceptor3d) {
+      interceptor3d.fireProjectile({
+        status: isBlocked ? 'BLOCKED' : 'MISSED',
+        command: tc.command,
+        targetLayer: tc.targetLayer
+      }, () => {
+        if (isBlocked) {
+          audioFx.playDeflect();
+          appendRedTeamLog('blocked', `[IMPACT: DEFLECTED] 🛡️ Quantum shield absorbed ${tc.category}.`);
+        } else {
+          audioFx.playBreach();
+          appendRedTeamLog('breached', `[IMPACT: BREACH] ⚠️ Barrier pierced! Server core compromised.`);
+        }
+      });
+    }
+
+    setTimeout(runNextStage, 1100);
+  }
+
+  setTimeout(runNextStage, 400);
 }
 
 /**
@@ -1002,11 +1178,11 @@ function closeSelfTestsModal() {
  * About Modal
  */
 function openAboutModal() {
-  elements.modalAbout.classList.remove('hidden');
+  if (elements.modalAbout) elements.modalAbout.classList.remove('hidden');
 }
 
 function closeAboutModal() {
-  elements.modalAbout.classList.add('hidden');
+  if (elements.modalAbout) elements.modalAbout.classList.add('hidden');
 }
 
 /**
